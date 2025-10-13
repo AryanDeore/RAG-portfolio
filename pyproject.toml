@@ -1,0 +1,23 @@
+[project]
+name = "rag-portfolio"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "comet-ml>=3.53.1",
+    "fastapi>=0.119.0",
+    "litellm>=1.78.0",
+    "opik>=1.8.68",
+    "pydantic>=2.12.0",
+    "pydantic-settings>=2.11.0",
+    "python-dotenv>=1.1.1",
+    "qdrant-client>=1.15.1",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "pytest>=8.4.2",
+    "ruff>=0.14.0",
+]

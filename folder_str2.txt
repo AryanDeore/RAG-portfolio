@@ -1,0 +1,10 @@
+.
+├── README.md
+├── contents.json
+├── folder_str.txt
+├── folder_str2.txt
+├── main.py
+├── pyproject.toml
+└── uv.lock
+
+1 directory, 7 files
