@@ -15,6 +15,9 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore",
     )
+
+    # CORS
+    cors_allow_origins: list[str] = Field(default=["http://localhost:3000"])
     
     # Application settings
     app_name: str = Field(default="RAG Portfolio", description="Application name")

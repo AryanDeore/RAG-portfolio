@@ -1,0 +1,79 @@
+{
+    "metadata": {
+      "version": "1.0.0",
+      "last_updated": "2025-01-15",
+      "owner": "Your Name"
+    },
+    
+    "bio": {
+      "name": "Your Name",
+      "title": "Full-Stack Developer | Cloud Architect",
+      "summary": "2-3 paragraph professional bio describing your background, expertise, and career focus",
+      "location": "USA",
+      "availability": "Open to opportunities",
+      "contact_preferences": "Preferred contact method"
+    },
+  
+    "projects": [
+      {
+        "title": "RAG Portfolio",
+        "tagline": "One-line description",
+        "description": "Detailed 2-3 paragraph description of what the project does and its significance",
+        "problem": "What problem does this solve? What gap does it fill?",
+        "tech_stack": ["Next.js", "FastAPI", "PostgreSQL", "AWS Lambda"],
+        "architecture": "Brief overview of system design and architecture decisions",
+        "features": [
+          "Key feature 1 with brief description",
+          "Key feature 2 with brief description"
+        ],
+        "challenges": "Technical challenges you faced and how you solved them",
+        "outcomes": {
+          "metrics": "Quantifiable results (users, performance, scale)",
+          "impact": "Business or user impact"
+        },
+        "links": {
+          "live": "https://example.com",
+          "github": "https://github.com/..."
+        },
+        "tags": ["full-stack", "microservices", "real-time", "cloud"]
+      }
+    ],
+  
+    "experience": [
+      {
+        "id": "exp-001",
+        "company": "Company Name",
+        "position": "Senior Software Engineer",
+        "location": "City, Country",
+        "type": "full-time|contract|internship|freelance",
+        "date_range": {
+          "start": "2022-01",
+          "end": "2024-06"
+        },
+        "description": "Overview of your role and the company/team context",
+        "responsibilities": [
+          "Key responsibility 1 with context",
+          "Key responsibility 2 with context"
+        ],
+        "achievements": [
+          "Specific achievement with measurable impact",
+          "Another achievement with results"
+        ],
+        "tech_stack": ["Technologies used in this role"],
+        "projects_worked_on": ["project-001", "project-002"],
+        "tags": ["backend", "devops", "team-lead"]
+      }
+    ],
+  
+    "skills": {
+      "languages": "[Python, SQL]",
+      "frameworks": "[FastAPI, dbt]",
+      "tools_and_platforms": "[AWS, GCP, Docker, Kubernetes, GitHub]"
+    },
+  
+    "education": [
+      {
+        "institution": "Northeastern University, Boston"
+      }
+    ]
+  }
