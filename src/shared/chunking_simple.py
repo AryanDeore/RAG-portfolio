@@ -182,24 +182,30 @@ def norm_list(x: Any) -> List[str]:
 
 def detect_md_heading(paragraph: str):
     """
-    Args:
-        paragraph: Paragraph that may start with a bold heading like '**Topic 1:** text...'
-
-    Input:
-        String.
-
-    Output:
-        Tuple (section_label, body_text)
-          - section_label: e.g., 'Topic 1' or None if not found
-          - body_text: paragraph with the heading removed; trimmed
+    Detect headings like:
+      - "**Title:** text"
+      - "**Title**: text"
+      - "**Title: ** text"   (colon inside the bold)
+      - "**Title** - text"
+    Returns: (section_label or None, body_text)
     """
-    # Matches "**Title:** text", "**Title**: text", "**Title** - text"
-    m = re.match(r"^\s*\*\*(.+?)\*\*\s*[:\-–]\s*(.*)$", paragraph.strip())
+    s = (paragraph or "").strip()
+    if not s:
+        return None, ""
+
+    # Case A: **Title** : text   OR   **Title** - text
+    m = re.match(r"^\s*\*\*(.+?)\*\*\s*[:\-–]\s*(.*)$", s)
     if m:
-        label = m.group(1).strip()
-        rest = m.group(2).strip()
-        return label, rest if rest else ""
-    return None, paragraph.strip()
+        label, rest = m.group(1).strip(), m.group(2).strip()
+        return label, (rest if rest else "")
+
+    # Case B: **Title: ** text  (colon inside bold)
+    m2 = re.match(r"^\s*\*\*\s*(.+?)\s*[:：]\s*\*\*\s*(.*)$", s)
+    if m2:
+        label, rest = m2.group(1).strip(), m2.group(2).strip()
+        return label, (rest if rest else "")
+
+    return None, s
 
 
 def bullet_children(text: str) -> List[str]:
@@ -440,44 +446,72 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
         company = exp.get("company")
         position = exp.get("position")
         title = f"{company} — {position}" if (company or position) else "experience"
-        pid = parent_id("experience", company or title)
+        pid = parent_id("experience", company or (title or "experience"))
 
         entities = sorted(set(norm_list(exp.get("tech_stack")) + norm_list(exp.get("tags"))))
         start = (exp.get("date_range") or {}).get("start")
         end = (exp.get("date_range") or {}).get("end")
 
+        def add_exp_field(field_name: str, text: Optional[str], idx_base: int) -> int:
+            """Paragraph-like field with optional **Heading:** detection."""
+            if not text:
+                return idx_base
+            idx = idx_base
+            for para in para_split(text):
+                section, body = detect_md_heading(para)
+                payload = body if section else para
+                for piece in pack_sentences(payload, max_chars=MAX_CHARS_PARAGRAPH):
+                    row = _row(
+                        pid, "experience", title, field_name, idx, piece,
+                        entities=entities, tags=(exp.get("tags") or []),
+                        company=company, project=None, last_updated=last_updated,
+                        start=start, end=end
+                    )
+                    if section:
+                        row["section"] = section
+                    rows.append(row)
+                    idx += 1
+            return idx
+
         i = 0
-        if exp.get("description"):
-            for para in para_split(exp["description"]):
-                for piece in pack_sentences(para, max_chars=MAX_CHARS_PARAGRAPH):
+        # Original fields (still supported)
+        i = add_exp_field("description", exp.get("description"), i)
+
+        # Your custom fields (strings with possible "**Heading:**" prefixes)
+        i = add_exp_field("company_description", exp.get("company_description"), i)
+        i = add_exp_field("projects_worked_on", exp.get("projects_worked_on"), i)
+
+        # responsibilities can be list or string
+        resp = exp.get("responsibilities")
+        if isinstance(resp, list):
+            for r in resp:
+                for piece in bullet_children(r):
                     rows.append(_row(
-                        pid, "experience", title, "description", i, piece,
+                        pid, "experience", title, "responsibility", i, piece,
                         entities=entities, tags=(exp.get("tags") or []),
                         company=company, project=None, last_updated=last_updated,
                         start=start, end=end
                     ))
                     i += 1
+        elif isinstance(resp, str):
+            i = add_exp_field("responsibilities", resp, i)
 
-        for r in exp.get("responsibilities", []) or []:
-            for piece in bullet_children(r):
-                rows.append(_row(
-                    pid, "experience", title, "responsibility", i, piece,
-                    entities=entities, tags=(exp.get("tags") or []),
-                    company=company, project=None, last_updated=last_updated,
-                    start=start, end=end
-                ))
-                i += 1
+        # achievements can be list or string (your sample is a string)
+        ach = exp.get("achievements")
+        if isinstance(ach, list):
+            for a in ach:
+                for piece in bullet_children(a):
+                    rows.append(_row(
+                        pid, "experience", title, "achievement", i, piece,
+                        entities=entities, tags=(exp.get("tags") or []),
+                        company=company, project=None, last_updated=last_updated,
+                        start=start, end=end
+                    ))
+                    i += 1
+        elif isinstance(ach, str):
+            i = add_exp_field("achievements", ach, i)
 
-        for a in exp.get("achievements", []) or []:
-            for piece in bullet_children(a):
-                rows.append(_row(
-                    pid, "experience", title, "achievement", i, piece,
-                    entities=entities, tags=(exp.get("tags") or []),
-                    company=company, project=None, last_updated=last_updated,
-                    start=start, end=end
-                ))
-                i += 1
-
+        # Tech stack summary line
         stack = norm_list(exp.get("tech_stack"))
         if stack:
             rows.append(_row(
