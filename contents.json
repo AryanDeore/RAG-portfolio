@@ -5,27 +5,21 @@
     
     "bio": {
       "name": "Aryan",
-      "title": "Full-Stack Developer | Cloud Architect",
-      "summary": "I am a AI engineer with experience in AWS, Data Engineering and Machine Learning",
-      "location": "USA",
-      "availability": "Open to opportunities",
-      "contact_preferences": "LinkedIn, Email"
+      "summary": "I am a AI engineer with 4 years of experience in AWS, Data Engineering and Machine Learning. I live in USA I am currently working at American Health Marketplace a as a Senior Software Engineer. Contact me on LinkedIn at aryandeore or Email as aryandeore.work@gmail.com."
     },
   
     "projects": [
       {
         "title": "RAG Portfolio",
-        "tagline": "One-line description",
+        "tagline": "A portfolio website that showcases my projects and skills",
         "description": 
         "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 2: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 3: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         "problem": "What problem does this solve? What gap does it fill?",
         "tech_stack": ["Next.js", "FastAPI", "PostgreSQL", "AWS Lambda"],
-        "architecture": "Brief overview of system design and architecture decisions",
-        "features": [
-          "Key feature 1 with brief description",
-          "Key feature 2 with brief description"
-        ],
-        "challenges": "Technical challenges you faced and how you solved them",
+        "architecture": "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 2: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "features":
+          "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "challenges": "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 2: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         "outcomes": {
           "metrics": "Quantifiable results (users, performance, scale)",
           "impact": "Business or user impact"
@@ -44,22 +38,16 @@
         "company": "Company Name",
         "position": "Senior Software Engineer",
         "location": "City, Country",
-        "type": "full-time|contract|internship|freelance",
         "date_range": {
           "start": "2022-01",
           "end": "2024-06"
         },
-        "description": "Overview of your role and the company/team context",
-        "responsibilities": [
-          "Key responsibility 1 with context",
-          "Key responsibility 2 with context"
-        ],
-        "achievements": [
-          "Specific achievement with measurable impact",
-          "Another achievement with results"
-        ],
-        "tech_stack": ["Technologies used in this role"],
-        "projects_worked_on": ["project-001", "project-002"],
+        "company_description": "American Health Marketplace is a healthcare technology company that provides a platform for healthcare providers to manage their patients and claims.",
+        "projects_worked_on":
+          "**Project 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "achievements":
+          "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "tech_stack": ["Python", "FastAPI", "PostgreSQL", "AWS Lambda"],
         "tags": ["backend", "devops", "team-lead"]
       }
     ],

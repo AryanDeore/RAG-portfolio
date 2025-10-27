@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "last_updated": "2025-10-20"
+  },
+  "bio": {
+    "summary": "Data engineer turning ML/GenAI engineer. Focused on RAG, agents, and data products."
+  },
+  "projects": [
+    {
+      "title": "RAG Portfolio",
+      "tagline": "Ask-me-anything about my work.",
+      "description": "**Overview:** A RAG-powered personal site with Qdrant + FastAPI. Built to answer questions about my projects and experience.\n\n**Architecture:** Next.js frontend + FastAPI backend on AWS Lambda; Qdrant Cloud for vector search; FastEmbed for CPU-friendly embeddings.",
+      "problem": "Make recruiters instantly see relevant projects and skills from a single query.",
+      "architecture": "Frontend: Next.js. Backend: FastAPI on AWS Lambda. Vector DB: Qdrant. Embeddings: BAAI/bge-small-en-v1.5. Infra: Docker + GitHub Actions.",
+      "challenges": "Low-latency search on CPU, consistent metadata for filtering, deterministic chunk IDs.",
+      "features": [
+        "- Child-level semantic chunking (paragraph & bullets)",
+        "- Deterministic chunk IDs (parent/field/index/hash)",
+        "- Entity & tag auto-detection for filters",
+        "- Live/GitHub link hints in payload"
+      ],
+      "outcomes": {
+        "metrics": "Sub-200ms query times locally; ~90% top-3 hit rate in smoke tests.",
+        "impact": "Faster recruiter discovery; clearer, filterable portfolio evidence."
+      },
+      "links": {
+        "live": "https://example.com",
+        "github": "https://github.com/example/rag-portfolio"
+      },
+      "tech_stack": [
+        "Python",
+        "FastAPI",
+        "Next.js",
+        "AWS Lambda",
+        "Qdrant",
+        "Docker"
+      ],
+      "tags": [
+        "RAG",
+        "portfolio",
+        "cloud"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "company": "Boehringer Ingelheim",
+      "position": "Data Analyst (Co-op)",
+      "date_range": {
+        "start": "2023-05",
+        "end": "2023-12"
+      },
+      "description": "Worked on analytics pipelines, dashboards, and quality checks across clinical datasets.",
+      "responsibilities": [
+        "- Built SQL pipelines and validated data quality.",
+        "- Collaborated with engineering teams to optimize queries."
+      ],
+      "achievements": [
+        "- Reduced report generation time by 40% with optimized transformations."
+      ],
+      "tech_stack": [
+        "SQL",
+        "Python",
+        "Tableau"
+      ],
+      "tags": [
+        "analytics",
+        "bi"
+      ]
+    }
+  ],
+  "skills": {
+    "languages": [
+      "Python",
+      "SQL"
+    ],
+    "frameworks": [
+      "FastAPI"
+    ],
+    "tools_and_platforms": [
+      "Docker",
+      "Qdrant",
+      "AWS"
+    ]
+  }
+}

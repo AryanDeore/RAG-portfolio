@@ -1,0 +1,582 @@
+[
+  {
+    "id": "2e8af4fc-e0bb-5ca7-a66d-fd27d166a7f8:summary:0:a5abf38b3f9e",
+    "parent_id": "2e8af4fc-e0bb-5ca7-a66d-fd27d166a7f8",
+    "parent_type": "bio",
+    "parent_title": "bio",
+    "field": "summary",
+    "index": 0,
+    "text": "Data engineer turning ML/GenAI engineer. Focused on RAG, agents, and data products.",
+    "entities": [],
+    "tags": [],
+    "company": null,
+    "project": null,
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:tagline:0:8dadae3f52ae",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "tagline",
+    "index": 0,
+    "text": "Ask-me-anything about my work.",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:description:1:a5441fc0e7df",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "description",
+    "index": 1,
+    "text": "**Overview:** A RAG-powered personal site with Qdrant + FastAPI. Built to answer questions about my projects and experience.",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:description:2:c602b97b2366",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "description",
+    "index": 2,
+    "text": "**Architecture:** Next.js frontend + FastAPI backend on AWS Lambda; Qdrant Cloud for vector search; FastEmbed for CPU-friendly embeddings.",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:problem:3:e4322416ba06",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "problem",
+    "index": 3,
+    "text": "Make recruiters instantly see relevant projects and skills from a single query.",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:architecture:4:2c82f8285047",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "architecture",
+    "index": 4,
+    "text": "Frontend: Next.js. Backend: FastAPI on AWS Lambda. Vector DB: Qdrant. Embeddings: BAAI/bge-small-en-v1.5. Infra: Docker + GitHub Actions.",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:challenges:5:8754dab05d7c",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "challenges",
+    "index": 5,
+    "text": "Low-latency search on CPU, consistent metadata for filtering, deterministic chunk IDs.",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:outcomes.metrics:6:6b54536a52ed",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "outcomes.metrics",
+    "index": 6,
+    "text": "Sub-200ms query times locally; ~90% top-3 hit rate in smoke tests.",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:outcomes.impact:7:c5841e362932",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "outcomes.impact",
+    "index": 7,
+    "text": "Faster recruiter discovery; clearer, filterable portfolio evidence.",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:feature:8:0b931ac1bd73",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "feature",
+    "index": 8,
+    "text": "Child-level semantic chunking (paragraph & bullets)",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:feature:9:b78fc24f8f6e",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "feature",
+    "index": 9,
+    "text": "Deterministic chunk IDs (parent/field/index/hash)",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:feature:10:63012021229f",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "feature",
+    "index": 10,
+    "text": "Entity & tag auto-detection for filters",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:feature:11:8bdb7ddce39c",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "feature",
+    "index": 11,
+    "text": "Live/GitHub link hints in payload",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "2323521c-4f06-5b62-bcad-b84293b0a9df:links:12:cf5ff0405c8a",
+    "parent_id": "2323521c-4f06-5b62-bcad-b84293b0a9df",
+    "parent_type": "project",
+    "parent_title": "RAG Portfolio",
+    "field": "links",
+    "index": 12,
+    "text": "Live: https://example.com | GitHub: https://github.com/example/rag-portfolio",
+    "entities": [
+      "AWS",
+      "AWS Lambda",
+      "Docker",
+      "FastAPI",
+      "Next.js",
+      "Python",
+      "Qdrant",
+      "Vector db"
+    ],
+    "tags": [
+      "RAG",
+      "backend",
+      "cloud",
+      "devops",
+      "frontend",
+      "portfolio"
+    ],
+    "company": null,
+    "project": "RAG Portfolio",
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "e4f06895-8a23-573d-92b0-bde768a12cd3:description:0:ae1c7421d2a1",
+    "parent_id": "e4f06895-8a23-573d-92b0-bde768a12cd3",
+    "parent_type": "experience",
+    "parent_title": "Boehringer Ingelheim — Data Analyst (Co-op)",
+    "field": "description",
+    "index": 0,
+    "text": "Worked on analytics pipelines, dashboards, and quality checks across clinical datasets.",
+    "entities": [
+      "Python",
+      "SQL",
+      "Tableau",
+      "analytics",
+      "bi"
+    ],
+    "tags": [
+      "analytics",
+      "bi"
+    ],
+    "company": "Boehringer Ingelheim",
+    "project": null,
+    "date_start": "2023-05",
+    "date_end": "2023-12",
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "e4f06895-8a23-573d-92b0-bde768a12cd3:responsibility:1:f2ccf89b69c8",
+    "parent_id": "e4f06895-8a23-573d-92b0-bde768a12cd3",
+    "parent_type": "experience",
+    "parent_title": "Boehringer Ingelheim — Data Analyst (Co-op)",
+    "field": "responsibility",
+    "index": 1,
+    "text": "Built SQL pipelines and validated data quality.",
+    "entities": [
+      "Python",
+      "SQL",
+      "Tableau",
+      "analytics",
+      "bi"
+    ],
+    "tags": [
+      "analytics",
+      "bi"
+    ],
+    "company": "Boehringer Ingelheim",
+    "project": null,
+    "date_start": "2023-05",
+    "date_end": "2023-12",
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "e4f06895-8a23-573d-92b0-bde768a12cd3:responsibility:2:d92e98590f38",
+    "parent_id": "e4f06895-8a23-573d-92b0-bde768a12cd3",
+    "parent_type": "experience",
+    "parent_title": "Boehringer Ingelheim — Data Analyst (Co-op)",
+    "field": "responsibility",
+    "index": 2,
+    "text": "Collaborated with engineering teams to optimize queries.",
+    "entities": [
+      "Python",
+      "SQL",
+      "Tableau",
+      "analytics",
+      "bi"
+    ],
+    "tags": [
+      "analytics",
+      "bi"
+    ],
+    "company": "Boehringer Ingelheim",
+    "project": null,
+    "date_start": "2023-05",
+    "date_end": "2023-12",
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "e4f06895-8a23-573d-92b0-bde768a12cd3:achievement:3:6c19c0f55a00",
+    "parent_id": "e4f06895-8a23-573d-92b0-bde768a12cd3",
+    "parent_type": "experience",
+    "parent_title": "Boehringer Ingelheim — Data Analyst (Co-op)",
+    "field": "achievement",
+    "index": 3,
+    "text": "Reduced report generation time by 40% with optimized transformations.",
+    "entities": [
+      "Python",
+      "SQL",
+      "Tableau",
+      "analytics",
+      "bi"
+    ],
+    "tags": [
+      "analytics",
+      "bi"
+    ],
+    "company": "Boehringer Ingelheim",
+    "project": null,
+    "date_start": "2023-05",
+    "date_end": "2023-12",
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "e4f06895-8a23-573d-92b0-bde768a12cd3:tech_stack:4:a27feccee2e6",
+    "parent_id": "e4f06895-8a23-573d-92b0-bde768a12cd3",
+    "parent_type": "experience",
+    "parent_title": "Boehringer Ingelheim — Data Analyst (Co-op)",
+    "field": "tech_stack",
+    "index": 4,
+    "text": "Technologies used: Python, SQL, Tableau.",
+    "entities": [
+      "Python",
+      "SQL",
+      "Tableau",
+      "analytics",
+      "bi"
+    ],
+    "tags": [
+      "analytics",
+      "bi"
+    ],
+    "company": "Boehringer Ingelheim",
+    "project": null,
+    "date_start": "2023-05",
+    "date_end": "2023-12",
+    "last_updated": "2025-10-20"
+  },
+  {
+    "id": "a50b46d8-ed09-5a38-bd84-71a164fddaff:catalog:0:ad61a2f3e24f",
+    "parent_id": "a50b46d8-ed09-5a38-bd84-71a164fddaff",
+    "parent_type": "skills",
+    "parent_title": "skills",
+    "field": "catalog",
+    "index": 0,
+    "text": "Languages: Python, SQL. Frameworks: FastAPI. Tools & Platforms: Docker, Qdrant, AWS.",
+    "entities": [
+      "AWS",
+      "Docker",
+      "FastAPI",
+      "Python",
+      "Qdrant",
+      "SQL"
+    ],
+    "tags": [],
+    "company": null,
+    "project": null,
+    "date_start": null,
+    "date_end": null,
+    "last_updated": "2025-10-20"
+  }
+]

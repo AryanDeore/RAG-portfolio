@@ -226,6 +226,119 @@ def bullet_children(text: str) -> List[str]:
         pieces.extend(pack_sentences(para, max_chars=MAX_CHARS_BULLET))
     return pieces
 
+def normalize_token(tok: str) -> str:
+    """
+    Canonicalize technology strings (simple, fast).
+    Args: tok (str)
+    Output: canonical display string (e.g., 'postgres' -> 'PostgreSQL')
+    """
+    t = (tok or "").strip()
+    if not t:
+        return t
+    low = t.lower()
+    alias = {
+        "aws": "AWS",
+        "amazon web services": "AWS",
+        "gcp": "GCP",
+        "google cloud platform": "GCP",
+        "azure": "Azure",
+        "postgres": "PostgreSQL",
+        "postgresql": "PostgreSQL",
+        "nextjs": "Next.js",
+        "next.js": "Next.js",
+        "fastapi": "FastAPI",
+        "lambda": "AWS Lambda",
+        "aws lambda": "AWS Lambda",
+        "docker": "Docker",
+        "kubernetes": "Kubernetes",
+        "dbt": "dbt",
+        "sql": "SQL",
+        "python": "Python",
+    }
+    if low in alias:
+        return alias[low]
+    if "." in t:
+        parts = t.split(".")
+        return ".".join(p[:1].upper() + p[1:] for p in parts)
+    return t[:1].upper() + t[1:]
+
+
+def extract_entities_from_text(text: str) -> List[str]:
+    """
+    Lightweight entity harvesting from free text using a small catalog.
+    Args: text (str)
+    Output: list of canonical entity strings (deduped)
+    """
+    if not text:
+        return []
+    s = text.lower()
+    catalog = {
+        "aws": ["aws", "amazon web services"],
+        "gcp": ["gcp", "google cloud platform"],
+        "azure": ["azure"],
+        "aws lambda": ["aws lambda", " lambda "],
+        "postgresql": ["postgres", "postgresql"],
+        "fastapi": ["fastapi"],
+        "next.js": ["next.js", "nextjs"],
+        "docker": ["docker"],
+        "kubernetes": ["kubernetes", "k8s"],
+        "python": ["python"],
+        "sql": [" sql "],  # add spaces to avoid matching words like 'sequel'
+        "rag": ["retrieval-augmented", "retrieval augmented", " rag "],
+        "vector db": ["qdrant", "pinecone", "weaviate", "vector db", "vectordb"],
+    }
+    found: List[str] = []
+    for canon, triggers in catalog.items():
+        for trig in triggers:
+            if trig in s:
+                found.append(normalize_token(canon))
+                break
+    return sorted(set(found))
+
+
+def build_project_entities_and_tags(proj: Dict[str, Any]) -> (List[str], List[str]):
+    """
+    Build richer entities and tags for a project.
+    Args: proj (dict) – one project object from contents.json
+    Output: (entities: List[str], tags: List[str])
+    """
+    declared_tech = norm_list(proj.get("tech_stack"))
+    declared_tags = norm_list(proj.get("tags"))
+
+    # normalize declared tech
+    norm_tech = [normalize_token(t) for t in declared_tech if t]
+
+    # harvest entities from long text fields (description/architecture/challenges/features/outcomes)
+    text_fields = [
+        proj.get("description") or "",
+        proj.get("problem") or "",
+        proj.get("architecture") or "",
+        proj.get("challenges") or "",
+        " ".join(proj.get("features") or []) if isinstance(proj.get("features"), list) else (proj.get("features") or ""),
+        json.dumps(proj.get("outcomes") or {}, ensure_ascii=False),
+    ]
+    harvested = extract_entities_from_text(" \n ".join(text_fields))
+
+    entities = sorted(set(norm_tech + harvested))
+
+    # simple auto-tags from entities/content
+    auto_tags: List[str] = []
+    if any(e in entities for e in ["AWS", "AWS Lambda", "GCP", "Azure"]):
+        auto_tags.append("cloud")
+    if any(e in entities for e in ["Docker", "Kubernetes"]):
+        auto_tags.append("devops")
+    if "Next.js" in entities:
+        auto_tags.append("frontend")
+    if "FastAPI" in entities:
+        auto_tags.append("backend")
+    long_text = (" ".join(text_fields)).lower()
+    if "real-time" in long_text or "realtime" in long_text:
+        auto_tags.append("real-time")
+
+    tags = sorted(set(declared_tags + auto_tags))
+    return entities, tags
+
+
 
 # ------------------------------- main builder --------------------------------
 def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -260,7 +373,7 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
 
         # Entities = normalized list of tech_stack + tags (deduped, sorted).
         # This is useful metadata for retrieval filtering/boosting.
-        entities = sorted(set(norm_list(proj.get("tech_stack")) + norm_list(proj.get("tags"))))
+        entities, proj_tags = build_project_entities_and_tags(proj)
 
         def add_field(field: str, text: Optional[str], idx_base: int) -> int:
             """
@@ -278,7 +391,7 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
                 for piece in pack_sentences(payload, max_chars=MAX_CHARS_PARAGRAPH):
                     row = _row(
                         pid, "project", title, field, idx, piece,
-                        entities=entities, tags=(proj.get("tags") or []),
+                        entities=entities, tags=proj_tags,
                         company=None, project=title, last_updated=last_updated
                     )
                     if section:
@@ -303,7 +416,7 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
             for piece in bullet_children(feat):
                 rows.append(_row(
                     pid, "project", title, "feature", i, piece,
-                    entities=entities, tags=(proj.get("tags") or []),
+                    entities=entities, tags=proj_tags,
                     company=None, project=title, last_updated=last_updated
                 ))
                 i += 1
@@ -318,7 +431,7 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
         if link_text_parts:
             rows.append(_row(
                 pid, "project", title, "links", i, " | ".join(link_text_parts),
-                entities=entities, tags=(proj.get("tags") or []),
+                entities=entities, tags=proj_tags,
                 company=None, project=title, last_updated=last_updated
             ))
 
