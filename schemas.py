@@ -30,7 +30,7 @@ class Project(BaseModel):
     problem: Optional[str] = None
     tech_stack: list[str]
     architecture: Optional[str] = None
-    features: list[str] = []
+    features: Optional[str] = None
     challenges: Optional[str] = None
     outcomes: Optional[ProjectOutcomes] = None
     links: Optional[Links] = None
@@ -43,13 +43,11 @@ class Experience(BaseModel):
     company: str
     position: str
     location: Optional[str] = None
-    type: str
     date_range: DateRange
-    description: str
-    responsibilities: list[str] = []
-    achievements: list[str] = []
+    company_description: Optional[str] = None
+    projects_worked_on: Optional[str] = None
+    achievements: Optional[str] = None
     tech_stack: list[str] = []
-    projects_worked_on: list[str] = []
     tags: list[str] = []
 
 
