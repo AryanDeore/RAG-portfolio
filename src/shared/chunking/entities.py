@@ -6,6 +6,10 @@ from typing import Any, Dict, List, Tuple
 from configs.settings import settings
 from .utils import norm_list
 
+# Module-level variables for testing - can be monkeypatched
+_TECH_ALIAS = {}
+_TECH_CATALOG = {}
+
 def _load_json(path: str) -> Dict[str, Any]:
     """Load a JSON file into a Python dict with a safe fallback.
     
@@ -42,19 +46,35 @@ def _normalize_token(tok: str, alias_map: Dict[str, str]) -> str:
         return ".".join(p[:1].upper() + p[1:] for p in parts)
     return t[:1].upper() + t[1:]
 
-def extract_entities_from_text(text: str, catalog: Dict[str, List[str]], alias_map: Dict[str, str]) -> List[str]:
+def extract_entities_from_text(text: str, catalog: Dict[str, List[str]] = None, alias_map: Dict[str, str] = None) -> List[str]:
     """Harvest canonical entities from free text using trigger phrases defined in a catalog.
     
     Args:
         text (str): Free text to scan.
-        catalog (Dict[str, List[str]]): Canon->trigger list.
-        alias_map (Dict[str, str]): Alias normalization map.
+        catalog (Dict[str, List[str]], optional): Canon->trigger list. Uses module-level _TECH_CATALOG if None.
+        alias_map (Dict[str, str], optional): Alias normalization map. Uses module-level _TECH_ALIAS if None.
         
     Returns:
         List[str]: Sorted, deduplicated canonical entity list.
     """
     if not text:
         return []
+    
+    # Use provided parameters or fall back to module-level variables
+    if catalog is None:
+        if _TECH_CATALOG:
+            catalog = _TECH_CATALOG
+        else:
+            catalog_raw = _load_json(settings.tech_catalog_path)
+            catalog = {k: (v if isinstance(v, list) else []) for k, v in (catalog_raw or {}).items()}
+    
+    if alias_map is None:
+        if _TECH_ALIAS:
+            alias_map = _TECH_ALIAS
+        else:
+            alias_map_raw = _load_json(settings.tech_alias_path)
+            alias_map = {k.lower(): v for k, v in alias_map_raw.items()} if isinstance(alias_map_raw, dict) else {}
+    
     s = text.lower()
     found: List[str] = []
     for canon, triggers in catalog.items():
@@ -73,10 +93,17 @@ def build_project_entities_and_tags(proj: Dict[str, Any]) -> Tuple[List[str], Li
     Returns:
         Tuple[List[str], List[str]]: (entities, tags) suitable for retrieval and filtering.
     """
-    alias_map_raw = _load_json(settings.tech_alias_path)  # e.g., {"postgresql": "PostgreSQL", ...}
+    # Use module-level variables if available (for testing), otherwise load from JSON
+    if _TECH_ALIAS:
+        alias_map_raw = _TECH_ALIAS
+    else:
+        alias_map_raw = _load_json(settings.tech_alias_path)  # e.g., {"postgresql": "PostgreSQL", ...}
     alias_map: Dict[str, str] = {k.lower(): v for k, v in alias_map_raw.items()} if isinstance(alias_map_raw, dict) else {}
 
-    catalog_raw = _load_json(settings.tech_catalog_path)  # e.g., {"aws": ["aws", "amazon web services"], ...}
+    if _TECH_CATALOG:
+        catalog_raw = _TECH_CATALOG
+    else:
+        catalog_raw = _load_json(settings.tech_catalog_path)  # e.g., {"aws": ["aws", "amazon web services"], ...}
     catalog: Dict[str, List[str]] = {k: (v if isinstance(v, list) else []) for k, v in (catalog_raw or {}).items()}
 
     declared_tech = norm_list(proj.get("tech_stack"))
