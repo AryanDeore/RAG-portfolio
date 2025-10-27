@@ -4,19 +4,20 @@
     },
     
     "bio": {
-      "name": "Your Name",
+      "name": "Aryan",
       "title": "Full-Stack Developer | Cloud Architect",
-      "summary": "2-3 paragraph professional bio describing your background, expertise, and career focus",
+      "summary": "I am a AI engineer with experience in AWS, Data Engineering and Machine Learning",
       "location": "USA",
       "availability": "Open to opportunities",
-      "contact_preferences": "Preferred contact method"
+      "contact_preferences": "LinkedIn, Email"
     },
   
     "projects": [
       {
         "title": "RAG Portfolio",
         "tagline": "One-line description",
-        "description": "Detailed 2-3 paragraph description of what the project does and its significance",
+        "description": 
+        "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 2: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 3: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         "problem": "What problem does this solve? What gap does it fill?",
         "tech_stack": ["Next.js", "FastAPI", "PostgreSQL", "AWS Lambda"],
         "architecture": "Brief overview of system design and architecture decisions",
