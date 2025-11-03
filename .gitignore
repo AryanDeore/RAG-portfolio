@@ -9,6 +9,9 @@ qdrant_storage/
 # Custom files
 notes.md
 
+# Custom files
+notes.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

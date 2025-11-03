@@ -39,3 +39,11 @@ markers = [
   "integration: hits filesystem, services, or optional deps",
 ]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["."]
+markers = [
+  "unit: fast, pure-Python tests",
+  "integration: hits filesystem, services, or optional deps",
+]
