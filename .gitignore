@@ -1,3 +1,11 @@
+#Chunking
+chunks.json
+
+# Qdrant
+.cache_fastembed/
+qdrant_data/
+qdrant_storage/
+
 # Custom files
 notes.md
 
