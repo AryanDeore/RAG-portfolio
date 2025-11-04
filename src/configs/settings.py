@@ -6,7 +6,7 @@ including chunking, embedding/retrieval, and Qdrant connection details.
 
 from functools import lru_cache
 from typing import Optional, Annotated, List
-from pydantic import Field, AliasChoices
+from pydantic import Field, AliasChoices, AnyHttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Port type with numeric bounds for future use
@@ -30,38 +30,40 @@ class Settings(BaseSettings):
         # secrets_dir="/var/run/secrets/app",
     )
 
-    # ---- App basics ----
-    app_name: str = Field(default="RAG Portfolio", description="Human-friendly app name")
-    debug: bool = Field(default=False, description="Enable verbose logging and debug switches")
-    log_level: str = Field(default="INFO", description="Root log level")
-    cors_allow_origins: List[str] = Field(
-        default_factory=lambda: ["http://localhost:3000"], description="Allowed CORS origins"
-    )
+    # ====================== App / Server ======================
+    debug: bool = Field(True, alias="DEBUG")
+    log_level: str = Field("INFO", alias="LOG_LEVEL")
+    server_host: str = Field("0.0.0.0", alias="SERVER_HOST")
+    server_port: int = Field(8000, alias="SERVER_PORT")
+    cors_allow_origins: List[str] = Field(default_factory=lambda: ["http://localhost:3000"], description="Allowed CORS origins", alias="CORS_ALLOW_ORIGINS")
 
-    # ---- Secrets / external ----
-    llm_api_key: Optional[str] = Field(default=None, description="Provider API key for LLM (if used)")
-    qdrant_api_key: Optional[str] = Field(
-        default=None,
-        description="API key for Qdrant Cloud (leave None for local/no-auth)",
-    )
-    database_url: Optional[str] = Field(
-        default=None,
-        validation_alias=AliasChoices("DATABASE_URL", "DB_URL"),
-        description="SQLAlchemy-style URL for relational DB (optional)",
-    )
+    # ====================== Qdrant ======================
+    # Use your Cloud URL here; for local Docker you can set QDRANT_API_KEY=None
+    qdrant_url: AnyHttpUrl = Field(..., alias="QDRANT_URL", description="Qdrant cluster URL")
+    qdrant_api_key: Optional[str] = Field(None, alias="QDRANT_API_KEY", description="Qdrant API key")
+    qdrant_timeout: int = Field(30, alias="QDRANT_TIMEOUT")
+    qdrant_host: str = Field("http://127.0.0.1", alias="QDRANT_HOST")
+    qdrant_port: int = Field(6333, alias="QDRANT_PORT")
 
-    # ---- Qdrant connection ----
-    qdrant_host: str = Field(
-        default="http://localhost",
-        validation_alias=AliasChoices("QDRANT_HOST", "QDRANT_URL_BASE"),
-        description="Host (with scheme) for Qdrant service, e.g., http://localhost or https://xxx.aws.cloud.qdrant.io",
-    )
-    qdrant_port: Port = Field(
-        default=6333,
-        description="TCP port for Qdrant; ignored by some managed cloud endpoints",
-    )
+    # Collection names: writer and (optionally) a stable reader alias
+    embed_collection: str = Field("rag_portfolio_v1", alias="EMBED_COLLECTION")
+    embed_collection_read: str = Field("portfolio_current", alias="EMBED_COLLECTION_READ")
+    
+    # -------------------- Embedding --------------------------
+    embed_model: str = Field("BAAI/bge-small-en-v1.5", alias="EMBED_MODEL")
+    embed_dim: int = Field(384, alias="EMBED_DIM")
+    embed_metric: str = Field("Cosine", alias="EMBED_METRIC")
+    embed_batch_size: int = Field(128, alias="EMBED_BATCH_SIZE")
+    embed_id_scheme: str = Field("uuid", alias="EMBED_ID_SCHEME")
 
-    # ---- Chunker knobs (consumed directly by chunking.*) ----
+    # -------------------- Retrieval --------------------------
+    search_top_k: int = Field(5, alias="SEARCH_TOP_K")
+    search_filter_project: Optional[str] = Field(None, alias="SEARCH_FILTER_PROJECT")  # e.g., "RAG Portfolio"
+    rerank_top_n: int = Field(0, alias="RERANK_TOP_N")  # 0 disables reranking
+
+
+
+    # ====================== Chunking ======================
     chunk_max_chars_paragraph: int = Field(default=700, description="Hard cap for paragraph-sized chunks")
     chunk_split_long_bullets: bool = Field(default=False, description="Split long bullets into child chunks")
     chunk_max_chars_bullet: int = Field(default=700, description="Hard cap for bullet-sized chunks")
@@ -70,54 +72,6 @@ class Settings(BaseSettings):
     tech_alias_path: str = Field(default="configs/tech_alias.json", description="Alias map for tech entities")
     tech_catalog_path: str = Field(default="configs/tech_catalog.json", description="Canonical tech catalog JSON")
 
-    # ---- Embedding / Retrieval (v1 defaults) ----
-    embed_model: str = Field(
-        default="BAAI/bge-small-en-v1.5",
-        validation_alias=AliasChoices("EMBED_MODEL"),
-        description="FastEmbed model name for dense embeddings (English)",
-    )
-    embed_dim: int = Field(
-        default=384,
-        validation_alias=AliasChoices("EMBED_DIM"),
-        description="Output vector size of the embedding model; must match collection vector size",
-    )
-    embed_metric: str = Field(
-        default="Cosine",
-        validation_alias=AliasChoices("EMBED_METRIC"),
-        description='Vector similarity metric: "Cosine" | "Dot" | "Euclid"',
-    )
-    embed_batch_size: int = Field(
-        default=128,
-        validation_alias=AliasChoices("EMBED_BATCH", "EMBED_BATCH_SIZE"),
-        description="Batch size for embedding/upserts",
-    )
-    embed_cache_dir: str = Field(
-        default=".cache_fastembed",
-        validation_alias=AliasChoices("EMBED_CACHE_DIR"),
-        description="Local cache dir for FastEmbed model files",
-    )
-    embed_collection: str = Field(
-        default="resourcebooks_v1",
-        validation_alias=AliasChoices("EMBED_COLLECTION", "QDRANT_COLLECTION"),
-        description="Qdrant collection name for storing vectors",
-    )
-    embed_id_scheme: str = Field(
-        default="uuid",
-        validation_alias=AliasChoices("EMBED_ID_SCHEME"),
-        description="Scheme for generating point IDs: 'uuid' (default) | 'int'",
-    )
-    retrieval_k: int = Field(
-        default=10,
-        validation_alias=AliasChoices("RETRIEVAL_K", "TOPK"),
-        description="Default number of nearest neighbors to retrieve",
-    )
-
-    # ---- Observability (optional) ----
-    comet_project_name: str = Field(
-        default="rag-embed",
-        validation_alias=AliasChoices("COMET_PROJECT_NAME"),
-        description="Comet project to log runs under (if COMET_API_KEY is set)",
-    )
 
     # ---- Convenience computed properties ----
     @property

@@ -33,16 +33,7 @@ embed-cli = "shared.embedding.cli:main"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-pythonpath = ["src"]
-markers = [
-  "unit: fast, pure-Python tests",
-  "integration: hits filesystem, services, or optional deps",
-]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "-q"
-pythonpath = ["."]
+pythonpath = ["src", "."]
 markers = [
   "unit: fast, pure-Python tests",
   "integration: hits filesystem, services, or optional deps",

@@ -10,7 +10,9 @@ def test_settings_loads_without_secrets_dir(monkeypatch):
     monkeypatch.delenv("APP_SECRETS_DIR", raising=False)
     importlib.reload(settings_module)
     s = settings_module.get_settings()
-    assert s.app_name == "RAG Portfolio"
+    # Verify settings object loads correctly by checking an existing field
+    assert s.debug is not None
+    assert isinstance(s.chunk_max_chars_paragraph, int)
 
 def test_env_override_chunk_limits(monkeypatch):
     monkeypatch.setenv("CHUNK_MAX_CHARS_PARAGRAPH", "120")
