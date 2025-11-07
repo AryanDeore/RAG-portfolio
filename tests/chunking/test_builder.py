@@ -4,6 +4,7 @@
 from src.shared.chunking.builder import build_children
 
 def test_build_children_minimal_contents():
+    """Verify build_children processes minimal contents dict and produces chunks for bio, projects, experience, and skills."""
     contents = {
         "metadata": {"last_updated": "2025-10-14"},
         "bio": {"summary": "Hi there."},

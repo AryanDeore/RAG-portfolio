@@ -5,6 +5,7 @@ import importlib
 from src.shared.chunking import entities as ent
 
 def test_extract_entities_with_monkeypatched_catalog(monkeypatch):
+    """Verify extract_entities_from_text identifies tech entities using in-memory catalogs and aliases."""
     # Patch catalogs so we don't rely on filesystem JSON
     monkeypatch.setattr(ent, "_TECH_ALIAS", {
         "aws": "AWS",
@@ -30,6 +31,7 @@ def test_extract_entities_with_monkeypatched_catalog(monkeypatch):
     assert any(x.lower() == "rag" for x in found)
 
 def test_build_project_entities_and_tags(monkeypatch):
+    """Verify build_project_entities_and_tags extracts entities from project data and generates auto-tags based on tech stack and features."""
     monkeypatch.setattr(ent, "_TECH_ALIAS", {
         "aws": "AWS", "fastapi": "FastAPI", "next.js": "Next.js"
     }, raising=True)

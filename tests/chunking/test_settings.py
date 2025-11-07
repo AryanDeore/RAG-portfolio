@@ -6,6 +6,7 @@ import importlib
 from configs import settings as settings_module
 
 def test_settings_loads_without_secrets_dir(monkeypatch):
+    """Verify settings load correctly without requiring a secrets directory, using defaults and env vars."""
     # Ensure no warning-producing secrets_dir path is set/exists
     monkeypatch.delenv("APP_SECRETS_DIR", raising=False)
     importlib.reload(settings_module)
@@ -15,6 +16,7 @@ def test_settings_loads_without_secrets_dir(monkeypatch):
     assert isinstance(s.chunk_max_chars_paragraph, int)
 
 def test_env_override_chunk_limits(monkeypatch):
+    """Verify environment variables can override default settings values after module reload."""
     monkeypatch.setenv("CHUNK_MAX_CHARS_PARAGRAPH", "120")
     # Force reload to pick up env change
     importlib.reload(settings_module)
