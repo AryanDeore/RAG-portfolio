@@ -11,7 +11,7 @@ DIST = {"Cosine": Distance.COSINE, "Dot": Distance.DOT, "Euclid": Distance.EUCLI
 class QdrantStore:
     def __init__(self):
         self.client = QdrantClient(
-            url=settings.qdrant_url,
+            url=settings.qdrant_url_resolved,
             api_key=settings.qdrant_api_key
         )
 

@@ -21,6 +21,7 @@ def test_qdrant_store_init_uses_settings(monkeypatch):
     monkeypatch.setattr(qdrant_store, "QdrantClient", mock_client_class)
     mock_settings = Mock()
     mock_settings.qdrant_url = "http://localhost:6333"
+    mock_settings.qdrant_url_resolved = "http://localhost:6333"
     mock_settings.qdrant_api_key = "test_key"
     monkeypatch.setattr(qdrant_store, "settings", mock_settings)
     store = qdrant_store.QdrantStore()
@@ -37,6 +38,7 @@ def test_create_or_recreate_with_recreate_true(monkeypatch):
     monkeypatch.setattr(qdrant_store, "QdrantClient", mock_client_class)
     mock_settings = Mock()
     mock_settings.qdrant_url = "http://localhost:6333"
+    mock_settings.qdrant_url_resolved = "http://localhost:6333"
     mock_settings.qdrant_api_key = "test_key"
     mock_settings.embed_dim = 384
     mock_settings.embed_metric = "Cosine"
@@ -58,6 +60,7 @@ def test_create_or_recreate_with_recreate_false_success(monkeypatch):
     monkeypatch.setattr(qdrant_store, "QdrantClient", mock_client_class)
     mock_settings = Mock()
     mock_settings.qdrant_url = "http://localhost:6333"
+    mock_settings.qdrant_url_resolved = "http://localhost:6333"
     mock_settings.qdrant_api_key = "test_key"
     mock_settings.embed_dim = 384
     mock_settings.embed_metric = "Cosine"
@@ -77,6 +80,7 @@ def test_create_or_recreate_with_recreate_false_handles_existing(monkeypatch):
     monkeypatch.setattr(qdrant_store, "QdrantClient", mock_client_class)
     mock_settings = Mock()
     mock_settings.qdrant_url = "http://localhost:6333"
+    mock_settings.qdrant_url_resolved = "http://localhost:6333"
     mock_settings.qdrant_api_key = "test_key"
     mock_settings.embed_dim = 384
     mock_settings.embed_metric = "Cosine"
@@ -94,6 +98,7 @@ def test_upsert_points_calls_client_upsert(monkeypatch):
     monkeypatch.setattr(qdrant_store, "QdrantClient", mock_client_class)
     mock_settings = Mock()
     mock_settings.qdrant_url = "http://localhost:6333"
+    mock_settings.qdrant_url_resolved = "http://localhost:6333"
     mock_settings.qdrant_api_key = "test_key"
     mock_settings.embed_collection = "test_collection"
     monkeypatch.setattr(qdrant_store, "settings", mock_settings)
@@ -116,6 +121,7 @@ def test_search_calls_client_search(monkeypatch):
     monkeypatch.setattr(qdrant_store, "QdrantClient", mock_client_class)
     mock_settings = Mock()
     mock_settings.qdrant_url = "http://localhost:6333"
+    mock_settings.qdrant_url_resolved = "http://localhost:6333"
     mock_settings.qdrant_api_key = "test_key"
     mock_settings.embed_collection = "test_collection"
     monkeypatch.setattr(qdrant_store, "settings", mock_settings)
@@ -138,6 +144,7 @@ def test_search_without_filter(monkeypatch):
     monkeypatch.setattr(qdrant_store, "QdrantClient", mock_client_class)
     mock_settings = Mock()
     mock_settings.qdrant_url = "http://localhost:6333"
+    mock_settings.qdrant_url_resolved = "http://localhost:6333"
     mock_settings.qdrant_api_key = "test_key"
     mock_settings.embed_collection = "test_collection"
     monkeypatch.setattr(qdrant_store, "settings", mock_settings)

@@ -38,12 +38,13 @@ class Settings(BaseSettings):
     cors_allow_origins: List[str] = Field(default_factory=lambda: ["http://localhost:3000"], description="Allowed CORS origins", alias="CORS_ALLOW_ORIGINS")
 
     # ====================== Qdrant ======================
-    # Use your Cloud URL here; for local Docker you can set QDRANT_API_KEY=None
-    qdrant_url: AnyHttpUrl = Field(..., alias="QDRANT_URL", description="Qdrant cluster URL")
-    qdrant_api_key: Optional[str] = Field(None, alias="QDRANT_API_KEY", description="Qdrant API key")
+    # For Qdrant Cloud: set QDRANT_URL to your cloud URL (e.g., https://xxx.cloud.qdrant.io)
+    # For local Qdrant: leave QDRANT_URL unset and it will use QDRANT_HOST:QDRANT_PORT
+    qdrant_url: Optional[AnyHttpUrl] = Field(None, alias="QDRANT_URL", description="Qdrant cluster URL (cloud or local)")
+    qdrant_api_key: Optional[str] = Field(None, alias="QDRANT_API_KEY", description="Qdrant API key (required for cloud)")
     qdrant_timeout: int = Field(30, alias="QDRANT_TIMEOUT")
-    qdrant_host: str = Field("http://127.0.0.1", alias="QDRANT_HOST")
-    qdrant_port: int = Field(6333, alias="QDRANT_PORT")
+    qdrant_host: str = Field("http://127.0.0.1", alias="QDRANT_HOST", description="Local Qdrant host (fallback if QDRANT_URL not set)")
+    qdrant_port: int = Field(6333, alias="QDRANT_PORT", description="Local Qdrant port (fallback if QDRANT_URL not set)")
 
     # Collection names: writer and (optionally) a stable reader alias
     embed_collection: str = Field("rag_portfolio_v1", alias="EMBED_COLLECTION")
@@ -75,14 +76,17 @@ class Settings(BaseSettings):
 
     # ---- Convenience computed properties ----
     @property
-    def qdrant_url(self) -> str:
+    def qdrant_url_resolved(self) -> str:
         """
-        Compose the full Qdrant base URL from host and port.
+        Resolve the Qdrant URL: use QDRANT_URL if set, otherwise compose from host and port.
 
         Returns:
-            str: e.g., "http://localhost:6333" or "https://xxx.cloud.qdrant.io:6333"
+            str: e.g., "https://xxx.cloud.qdrant.io" or "http://localhost:6333"
         """
-        # If host already includes a port (common in cloud URLs), keep it as-is.
+        # If QDRANT_URL is set (e.g., from environment), use it directly
+        if self.qdrant_url:
+            return str(self.qdrant_url)
+        # Otherwise, compose from host and port (for local Qdrant)
         if ":" in self.qdrant_host.rsplit("/", 1)[-1]:
             return self.qdrant_host
         return f"{self.qdrant_host}:{self.qdrant_port}"
