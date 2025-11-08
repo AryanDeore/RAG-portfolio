@@ -56,13 +56,15 @@ class Settings(BaseSettings):
     embed_metric: str = Field("Cosine", alias="EMBED_METRIC")
     embed_batch_size: int = Field(128, alias="EMBED_BATCH_SIZE")
     embed_id_scheme: str = Field("uuid", alias="EMBED_ID_SCHEME")
+    embed_cache_dir: Optional[str] = Field(None, alias="EMBED_CACHE_DIR", description="Directory to cache FastEmbed models (defaults to FastEmbed's default)")
 
     # -------------------- Retrieval --------------------------
     search_top_k: int = Field(5, alias="SEARCH_TOP_K")
     search_filter_project: Optional[str] = Field(None, alias="SEARCH_FILTER_PROJECT")  # e.g., "RAG Portfolio"
     rerank_top_n: int = Field(0, alias="RERANK_TOP_N")  # 0 disables reranking
 
-
+    # ====================== Logging / Comet ML ======================
+    comet_project_name: str = Field("rag-portfolio", alias="COMET_PROJECT_NAME", description="Comet ML project name for experiment tracking")
 
     # ====================== Chunking ======================
     chunk_max_chars_paragraph: int = Field(default=700, description="Hard cap for paragraph-sized chunks")

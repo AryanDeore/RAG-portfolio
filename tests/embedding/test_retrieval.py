@@ -55,7 +55,7 @@ def test_search_chunks_uses_default_k_from_settings():
     with patch("src.shared.embedding.retrieval.FastEmbedProvider", return_value=mock_provider):
         with patch("src.shared.embedding.retrieval.QdrantStore", return_value=mock_store):
             with patch("src.shared.embedding.retrieval.settings") as mock_settings:
-                mock_settings.retrieval_k = 5
+                mock_settings.search_top_k = 5
                 result = retrieval.search_chunks("test query", k=None)
                 mock_store.search.assert_called_once_with([0.1, 0.2, 0.3], k=5)
 

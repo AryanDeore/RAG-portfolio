@@ -13,12 +13,12 @@ def search_chunks(query: str, k: int | None = None) -> List[Dict]:
 
     Args:
         query (str): User information need expressed in plain English.
-        k (int | None): Number of neighbors; defaults to settings.retrieval_k when None.
+        k (int | None): Number of neighbors; defaults to settings.search_top_k when None.
 
     Returns:
         List[Dict]: Lightweight hit dicts with id, score, doc_id, chunk_id, title, and snippet text.
     """
-    k = k or settings.retrieval_k
+    k = k or settings.search_top_k
     qvec = FastEmbedProvider().embed_query(query)
     hits = QdrantStore().search(qvec, k=k)
     return [

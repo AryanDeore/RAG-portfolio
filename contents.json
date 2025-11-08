@@ -13,20 +13,20 @@
         "title": "RAG Portfolio",
         "tagline": "A portfolio website that showcases my projects and skills",
         "description": 
-        "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit Kubernetes. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 2: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 3: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "**What is it: ** This is a RAG application where users can ask questions about me, my projects, my skills, my experience, etc.",
         "problem": "What problem does this solve? What gap does it fill?",
         "tech_stack": ["Next.js", "FastAPI", "PostgreSQL", "AWS Lambda"],
-        "architecture": "**Topic 1: ** Docker ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 2: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "architecture": "**chunking**: Simple overlap-based splitting at 200-300 tokens per chunk with ~50 token overlap for context continuity\n\n**embedding**: OpenAI text-embedding-ada-002 via LiteLLM, generating 1536-dimensional vectors for each chunk\n\n**vector store**: Qdrant Cloud managed instance with 'portfolio' collection for semantic similarity search\n\n**incremental embedding with chunk hashing**: SHA256 content hashing to detect unchanged chunks and skip re-embedding, reducing API costs\n\n**schema being uploaded in qdrant**: Point structure with stable chunk ID (e.g., project123_chunk1), 1536-d vector, and payload containing project_id, section tags, and original text\n\n**generation**: OpenAI GPT-3.5-turbo/GPT-4 via LiteLLM with max_tokens ~200-300, temperature 0.2-0.7, using retrieved context in assembled prompts\n\n**query routing**: Based on query intent (e.g., 'about me', 'projects', 'skills', 'experience'), route to appropriate parent node and children chunks",
         "features":
-          "**Topic 1: ** Machine Learning in LLMs consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "challenges": "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 2: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+          "**Feature 1: ** This is a feature of the RAG application that allows users to ask questions about me, my projects, my skills, my experience, etc.",
+        "challenges": "**Challenge 1: ** This is a challenge of the RAG application that allows users to ask questions about me, my projects, my skills, my experience, etc.",
         "outcomes": {
           "metrics": "Quantifiable results (users, performance, scale)",
-          "impact": "Business or user impact"
-        },
-        "links": {
+          "impact": "Business or user impact",
+          "links": {
           "live": "https://example.com",
           "github": "https://github.com/..."
+        }
         },
         "tags": ["full-stack", "microservices", "real-time", "cloud"]
       }
@@ -44,9 +44,9 @@
         },
         "company_description": "American Health Marketplace is a healthcare technology company that provides a platform for healthcare providers to manage their patients and claims.",
         "projects_worked_on":
-          "**Project 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+          "**Project 1: ** This is an example of a project that I worked on in American Health Marketplace.",
         "achievements":
-          "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+          "**Topic 1: ** This is an example of an achievement that I achieved in American Health Marketplace.",
         "tech_stack": ["Python", "FastAPI", "PostgreSQL", "AWS Lambda"],
         "tags": ["backend", "devops", "team-lead"]
       }
