@@ -3,9 +3,13 @@ Simple KNN retrieval pipeline that embeds a query and searches top-k chunks in Q
 """
 
 from typing import List, Dict
+from opik import Opik
 from .fastembed_provider import FastEmbedProvider
 from .qdrant_store import QdrantStore
 from configs.settings import settings
+
+# Create Opik client instance
+opik_client = Opik()
 
 def search_chunks(query: str, k: int | None = None) -> List[Dict]:
     """
@@ -13,15 +17,25 @@ def search_chunks(query: str, k: int | None = None) -> List[Dict]:
 
     Args:
         query (str): User information need expressed in plain English.
-        k (int | None): Number of neighbors; defaults to settings.retrieval_k when None.
+        k (int | None): Number of neighbors; defaults to settings.search_top_k when None.
 
     Returns:
         List[Dict]: Lightweight hit dicts with id, score, doc_id, chunk_id, title, and snippet text.
     """
-    k = k or settings.retrieval_k
+    k = k or settings.search_top_k
+    span = opik_client.span(
+        name="vector_search",
+        type="tool",
+        input={"query": query, "k": k},
+        metadata={
+            "collection": settings.embed_collection_read or settings.embed_collection,
+        }
+    )
+    
     qvec = FastEmbedProvider().embed_query(query)
     hits = QdrantStore().search(qvec, k=k)
-    return [
+    
+    results = [
         {
             "id": h.id,
             "score": h.score,
@@ -32,3 +46,19 @@ def search_chunks(query: str, k: int | None = None) -> List[Dict]:
         }
         for h in hits
     ]
+    
+    # Log retrieval results
+    span.end(
+        output={
+            "num_results": len(results),
+            "top_score": results[0]["score"] if results else None,
+            "chunk_ids": [r["id"] for r in results],
+            "doc_ids": list(set(r["doc_id"] for r in results if r.get("doc_id"))),
+        },
+        metadata={
+            "retrieval_k": k,
+            "actual_results": len(results),
+        }
+    )
+    
+    return results

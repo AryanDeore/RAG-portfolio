@@ -7,6 +7,7 @@ from fastembed import TextEmbedding
 from configs.settings import settings
 import os
 from pathlib import Path
+import opik
 
 class FastEmbedProvider:
     """
@@ -80,4 +81,26 @@ class FastEmbedProvider:
         Returns:
             list[float]: Dense vector suitable for ANN search against passage vectors.
         """
-        return list(self.model.embed([f"query: {query}"]))[0]
+        from opik import Opik
+        opik_client = Opik()
+        
+        span = opik_client.span(
+            name="embed_query",
+            type="tool",
+            input={"query": query},
+            metadata={
+                "embedding_model": settings.embed_model,
+                "embedding_dim": settings.embed_dim,
+            }
+        )
+        
+        embedding = list(self.model.embed([f"query: {query}"]))[0]
+        
+        span.end(
+            output={
+                "embedding_dim": len(embedding),
+                "embedding_norm": sum(x * x for x in embedding) ** 0.5,
+            }
+        )
+        
+        return embedding
