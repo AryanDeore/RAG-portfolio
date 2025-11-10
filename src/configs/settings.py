@@ -55,13 +55,18 @@ class Settings(BaseSettings):
     embed_metric: str = Field("Cosine", alias="EMBED_METRIC")
     embed_batch_size: int = Field(128, alias="EMBED_BATCH_SIZE")
     embed_id_scheme: str = Field("uuid", alias="EMBED_ID_SCHEME")
+    embed_cache_dir: Optional[str] = Field(None, alias="EMBED_CACHE_DIR", description="Directory to cache embedding models. If None, uses default FastEmbed cache.")
 
     # -------------------- Retrieval --------------------------
     search_top_k: int = Field(5, alias="SEARCH_TOP_K")
     search_filter_project: Optional[str] = Field(None, alias="SEARCH_FILTER_PROJECT")  # e.g., "RAG Portfolio"
     rerank_top_n: int = Field(0, alias="RERANK_TOP_N")  # 0 disables reranking
 
-
+    #====================== Generation ======================
+    # -------------------- LLM Defaults------------------------
+    llm_provider: str = Field("openai", alias="LLM_PROVIDER", description="Default LLM provider id for generation.")
+    llm_model: str = Field("gpt-4.1-nano", alias="LLM_MODEL", description="Default LiteLLM model id for generation.")
+    llm_temperature: float = Field(0.2, alias="LLM_TEMPERATURE", description="Default temperature for generation.")
 
     # ====================== Chunking ======================
     chunk_max_chars_paragraph: int = Field(default=700, description="Hard cap for paragraph-sized chunks")
