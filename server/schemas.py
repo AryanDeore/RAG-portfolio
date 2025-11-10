@@ -2,6 +2,7 @@
 
 from typing import List, Literal, Optional
 from pydantic import BaseModel, Field
+from src.configs.settings import settings
 
 Role = Literal["user", "assistant"]
 
@@ -17,7 +18,7 @@ class ChatRequest(BaseModel):
     question: str = Field(..., description="User's question to answer.")
     history: List[Msg] = Field(default_factory=list, description="Recent chat history as a list of messages.")
     k: int = Field(5, description="Number of nearest chunks to retrieve.")
-    model: str = Field("openai/gpt-4o-mini", description="LiteLLM model identifier, e.g. 'openai/gpt-4o-mini'.")
+    model: str = Field(default=settings.llm_model, description="LiteLLM model identifier, e.g. 'openai/gpt-4o-mini'.")
     temperature: float = Field(0.2, description="Sampling temperature for generation.")
     stream: bool = Field(False, description="Whether to stream the response.")
     use_hyde: bool = Field(False, description="Whether to enable HYDE query expansion retrieval.")
