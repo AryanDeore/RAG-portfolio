@@ -86,7 +86,7 @@ async def chat(req: ChatRequest) -> JSONResponse:
         text = resp["choices"][0]["message"]["content"]
         return JSONResponse(ChatResponse(answer=text).model_dump())
     except RateLimitError as e:
-        logger.error(f"Rate limit exceeded for model {req.model}: {e}")
+        logger.error(f"OpenRouter rate limit exceeded for model {req.model}: {e}")
         raise HTTPException(
             status_code=429,
             detail="API rate limit exceeded. Please try again later."
@@ -95,23 +95,23 @@ async def chat(req: ChatRequest) -> JSONResponse:
         logger.error(f"Authentication failed for model {req.model}: {e}")
         raise HTTPException(
             status_code=401,
-            detail="API authentication failed. Please check your API key."
+            detail="API authentication failed. Please check your OpenRouter API key."
         ) from e
     except InvalidRequestError as e:
         error_msg = str(e)
         if "insufficient_quota" in error_msg.lower() or "insufficient credits" in error_msg.lower():
-            logger.error(f"Insufficient API credits for model {req.model}: {e}")
+            logger.error(f"Insufficient OpenRouter credits for model {req.model}: {e}")
             raise HTTPException(
                 status_code=402,
-                detail="Insufficient API credits. Please add credits to your account."
+                detail="Insufficient API credits. Please add credits to your OpenRouter account."
             ) from e
-        logger.error(f"Invalid request for model {req.model}: {e}")
+        logger.error(f"Invalid OpenRouter request for model {req.model}: {e}")
         raise HTTPException(
             status_code=400,
             detail=f"Invalid request: {error_msg}"
         ) from e
     except APIError as e:
-        logger.error(f"API error for model {req.model}: {e}")
+        logger.error(f"OpenRouter API error for model {req.model}: {e}")
         raise HTTPException(
             status_code=503,
             detail=f"API service error: {str(e)}"
@@ -159,21 +159,21 @@ def chat_stream(req: ChatRequest) -> StreamingResponse:
                 if delta:
                     yield delta.encode("utf-8")
         except RateLimitError as e:
-            logger.error(f"Rate limit exceeded for model {req.model}: {e}")
+            logger.error(f"OpenRouter rate limit exceeded for model {req.model}: {e}")
             yield f"\n\n[ERROR] Rate limit exceeded. Please try again later.".encode("utf-8")
         except AuthenticationError as e:
-            logger.error(f"Authentication failed for model {req.model}: {e}")
-            yield f"\n\n[ERROR] API authentication failed. Please check your API key.".encode("utf-8")
+            logger.error(f"OpenRouter authentication failed for model {req.model}: {e}")
+            yield f"\n\n[ERROR] API authentication failed. Please check your OpenRouter API key.".encode("utf-8")
         except InvalidRequestError as e:
             error_msg = str(e)
             if "insufficient_quota" in error_msg.lower() or "insufficient credits" in error_msg.lower():
-                logger.error(f"Insufficient API credits for model {req.model}: {e}")
-                yield f"\n\n[ERROR] Insufficient API credits. Please add credits to your account.".encode("utf-8")
+                logger.error(f"Insufficient OpenRouter credits for model {req.model}: {e}")
+                yield f"\n\n[ERROR] Insufficient API credits. Please add credits to your OpenRouter account.".encode("utf-8")
             else:
                 logger.error(f"Invalid request for model {req.model}: {e}")
                 yield f"\n\n[ERROR] Invalid request: {error_msg}".encode("utf-8")
         except APIError as e:
-            logger.error(f"API error for model {req.model}: {e}")
+            logger.error(f"OpenRouter API error for model {req.model}: {e}")
             yield f"\n\n[ERROR] API service error: {str(e)}".encode("utf-8")
         except Exception as e:
             logger.exception(f"Unexpected error during streaming chat: {e}")

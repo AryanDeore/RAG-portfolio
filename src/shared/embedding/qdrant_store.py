@@ -10,8 +10,10 @@ DIST = {"Cosine": Distance.COSINE, "Dot": Distance.DOT, "Euclid": Distance.EUCLI
 
 class QdrantStore:
     def __init__(self):
+        # Convert qdrant_url to string (handles both AnyHttpUrl field and str property)
+        url = str(settings.qdrant_url)
         self.client = QdrantClient(
-            url=settings.qdrant_url,
+            url=url,
             api_key=settings.qdrant_api_key
         )
 

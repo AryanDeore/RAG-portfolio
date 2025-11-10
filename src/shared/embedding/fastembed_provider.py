@@ -30,36 +30,32 @@ class FastEmbedProvider:
         if FastEmbedProvider._initialized:
             return
         
-        # Determine cache directory
+        # Use cache_dir from settings, or None (FastEmbed's default)
         cache_dir = settings.embed_cache_dir
-        if cache_dir is None:
-            # Check if we're running on AWS Lambda
-            is_lambda = os.environ.get("LAMBDA_TASK_ROOT") is not None
-            
-            if is_lambda:
-                # On Lambda: try Lambda Layers location first
-                lambda_cache = "/opt/python/fastembed_cache"
-                # Check if /opt/python exists and we can write to it
-                if os.path.exists("/opt/python") and os.access("/opt/python", os.W_OK):
-                    # Try to create the cache directory to verify we can write
-                    try:
-                        Path(lambda_cache).mkdir(parents=True, exist_ok=True)
-                        cache_dir = lambda_cache
-                    except (OSError, PermissionError):
-                        # Can't write to /opt/python, use /tmp instead
-                        cache_dir = "/tmp/fastembed_cache"
-                else:
-                    # /opt/python doesn't exist or isn't writable, use /tmp
-                    cache_dir = "/tmp/fastembed_cache"
-            else:
-                # Local development: use FastEmbed's default cache location
-                # This will be ~/.cache/fastembed on most systems
-                cache_dir = None  # Let FastEmbed use its default
         
-        self.model = TextEmbedding(
-            model_name=settings.embed_model,
-            cache_dir=cache_dir
-        )
+        # If explicitly set to a problematic path, validate it
+        if cache_dir and cache_dir.startswith("/opt/python"):
+            # Only use /opt/python if it exists and is writable
+            if not (os.path.exists("/opt/python") and os.access("/opt/python", os.W_OK)):
+                # Fall back to None if /opt/python isn't available
+                cache_dir = None
+        
+        # Initialize model with error handling
+        try:
+            self.model = TextEmbedding(
+                model_name=settings.embed_model,
+                cache_dir=cache_dir
+            )
+        except (OSError, PermissionError) as e:
+            # If FastEmbed fails to create cache directory, retry with None
+            if cache_dir is not None:
+                self.model = TextEmbedding(
+                    model_name=settings.embed_model,
+                    cache_dir=None
+                )
+            else:
+                raise
+        
         FastEmbedProvider._initialized = True
 
     def embed_passages(self, texts: list[str]) -> list[list[float]]:

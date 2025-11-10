@@ -19,7 +19,7 @@ class ChatRequest(BaseModel):
     history: List[Msg] = Field(default_factory=list, description="Recent chat history as a list of messages.")
     k: int = Field(5, description="Number of nearest chunks to retrieve.")
     model: str = Field(default=settings.llm_model, description="LiteLLM model identifier, e.g. 'openai/gpt-4o-mini'.")
-    temperature: float = Field(0.2, description="Sampling temperature for generation.")
+    temperature: float = Field(default=settings.llm_temperature, description="Sampling temperature for generation.")
     stream: bool = Field(False, description="Whether to stream the response.")
     use_hyde: bool = Field(False, description="Whether to enable HYDE query expansion retrieval.")
     rerank: Literal["none", "cheap", "llm"] = Field("none", description="Reranker choice: none, cheap, or llm.")
