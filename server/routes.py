@@ -48,36 +48,38 @@ def _get_model_name(model: str) -> str:
     return model
 
 
-def _choose_retrieval(req: ChatRequest) -> List[Dict]:
+def _choose_retrieval(req: ChatRequest, parent_span=None) -> List[Dict]:
     """
     Chooses KNN or HYDE retrieval based on request flags and returns a list of hit dicts.
     
     Args:
         req (ChatRequest): Chat request containing retrieval configuration and question.
+        parent_span: Optional parent span for nested tracing.
     
     Returns:
         List[Dict]: List of hit dictionaries containing id, score, doc_id, chunk_id, title, and text fields.
     """
     if req.use_hyde:
-        return retrieve_with_hyde(req.question, k=req.k, hyde_model=req.model)
-    return retrieve_knn(req.question, k=req.k)
+        return retrieve_with_hyde(req.question, k=req.k, hyde_model=req.model, parent_span=parent_span)
+    return retrieve_knn(req.question, k=req.k, parent_span=parent_span)
 
 
-def _maybe_rerank(req: ChatRequest, hits: List[Dict]) -> List[Dict]:
+def _maybe_rerank(req: ChatRequest, hits: List[Dict], parent_span=None) -> List[Dict]:
     """
     Applies reranking if requested and returns the possibly reranked hit list.
     
     Args:
         req (ChatRequest): Chat request containing reranking configuration.
         hits (List[Dict]): List of hit dictionaries to potentially rerank.
+        parent_span: Optional parent span for nested tracing.
     
     Returns:
         List[Dict]: Reranked or original list of hit dictionaries.
     """
     if req.rerank == "cheap":
-        return cheap_rerank(req.question, hits, top_n=req.rerank_top_n or req.k)
+        return cheap_rerank(req.question, hits, top_n=req.rerank_top_n or req.k, parent_span=parent_span)
     if req.rerank == "llm":
-        return llm_rerank(req.question, hits, top_n=req.rerank_top_n or req.k, model=req.model)
+        return llm_rerank(req.question, hits, top_n=req.rerank_top_n or req.k, model=req.model, parent_span=parent_span)
     return hits
 
 
@@ -119,8 +121,8 @@ async def chat(req: ChatRequest) -> JSONResponse:
             type="tool",
             input={"question": req.question, "k": req.k, "use_hyde": req.use_hyde}
         )
-        hits = _choose_retrieval(req)
-        hits = _maybe_rerank(req, hits)
+        hits = _choose_retrieval(req, parent_span=retrieval_span)
+        hits = _maybe_rerank(req, hits, parent_span=retrieval_span)
         retrieval_span.end(
             output={
                 "num_chunks": len(hits),
@@ -304,8 +306,8 @@ def chat_stream(req: ChatRequest) -> StreamingResponse:
                 type="tool",
                 input={"question": req.question, "k": req.k, "use_hyde": req.use_hyde}
             )
-            hits = _choose_retrieval(req)
-            hits = _maybe_rerank(req, hits)
+            hits = _choose_retrieval(req, parent_span=retrieval_span)
+            hits = _maybe_rerank(req, hits, parent_span=retrieval_span)
             retrieval_span.end(
                 output={
                     "num_chunks": len(hits),

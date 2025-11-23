@@ -71,28 +71,39 @@ class FastEmbedProvider:
         """
         return list(self.model.embed([f"passage: {t}" for t in texts]))
 
-    def embed_query(self, query: str) -> list[float]:
+    def embed_query(self, query: str, parent_span=None) -> list[float]:
         """
         Embed a single user query with the recommended 'query:' prefix.
 
         Args:
             query (str): The user information need expressed as natural language.
+            parent_span: Optional parent span for nested tracing.
 
         Returns:
             list[float]: Dense vector suitable for ANN search against passage vectors.
         """
-        from opik import Opik
-        opik_client = Opik()
-        
-        span = opik_client.span(
-            name="embed_query",
-            type="tool",
-            input={"query": query},
-            metadata={
-                "embedding_model": settings.embed_model,
-                "embedding_dim": settings.embed_dim,
-            }
-        )
+        if parent_span:
+            span = parent_span.span(
+                name="embed_query",
+                type="tool",
+                input={"query": query},
+                metadata={
+                    "embedding_model": settings.embed_model,
+                    "embedding_dim": settings.embed_dim,
+                }
+            )
+        else:
+            from opik import Opik
+            opik_client = Opik()
+            span = opik_client.span(
+                name="embed_query",
+                type="tool",
+                input={"query": query},
+                metadata={
+                    "embedding_model": settings.embed_model,
+                    "embedding_dim": settings.embed_dim,
+                }
+            )
         
         embedding = list(self.model.embed([f"query: {query}"]))[0]
         
