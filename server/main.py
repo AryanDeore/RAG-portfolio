@@ -59,6 +59,22 @@ app.add_middleware(
 app.include_router(router)
 
 
+@app.get("/")
+def root():
+    """Root endpoint providing API information."""
+    return {
+        "service": "Aryan's Portfolio Assistant",
+        "version": "1.0.0",
+        "endpoints": {
+            "chat": "/chat",
+            "chat_stream": "/chat/stream",
+            "health": "/healthz",
+            "docs": "/docs",
+            "redoc": "/redoc"
+        }
+    }
+
+
 @app.get("/healthz")
 def healthz():
     """Returns a simple health status payload for readiness checks."""
