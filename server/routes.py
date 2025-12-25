@@ -13,7 +13,7 @@ from litellm.exceptions import (
     APIError,
 )
 from server.schemas import ChatRequest, ChatResponse
-from server.utils import join_context, build_messages, get_provider_from_model, get_model_name_for_opik
+from server.utils import join_context, build_messages
 from server.retrieval_pipeline import (
     retrieve_knn,
     retrieve_with_hyde,
@@ -171,23 +171,20 @@ async def chat(req: ChatRequest) -> JSONResponse:
         )
         text = resp["choices"][0]["message"]["content"]
         
-        # Extract usage
+        # Extract usage if available
         usage = resp.get("usage", {})
-        provider = get_provider_from_model(req.model)
-        model_name = get_model_name_for_opik(req.model)
-        
         llm_span.end(
             output={
                 "answer_length": len(text),
-                "answer": text[:500] if len(text) > 500 else text,
+                "answer": text[:500] if len(text) > 500 else text,  # Truncate for logging
             },
             usage={
                 "prompt_tokens": usage.get("prompt_tokens", 0),
                 "completion_tokens": usage.get("completion_tokens", 0),
                 "total_tokens": usage.get("total_tokens", 0),
             } if usage else None,
-            model=model_name,
-            provider=provider,
+            model=req.model,
+            provider="litellm"
         )
 
         # End trace with output

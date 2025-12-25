@@ -4,7 +4,6 @@ from typing import Dict, List, Iterator, Tuple, Optional, Any
 from opik import Opik
 from litellm import completion
 from src.shared.embedding.retrieval import search_chunks
-from server.utils import get_provider_from_model, get_model_name_for_opik
 
 # Create Opik client instance
 opik_client = Opik()
@@ -106,11 +105,8 @@ def hyde_expand(question: str, model: str, parent_span: Optional[Any] = None) ->
     resp = completion(model=_get_model_name(model), messages=[sys, user], temperature=0.0, stream=False)
     hypothetical_answer = resp["choices"][0]["message"]["content"].strip()
     
-    # Extract usage
+    # Extract usage if available
     usage = resp.get("usage", {})
-    provider = get_provider_from_model(model)
-    model_name = get_model_name_for_opik(model)
-    
     span.end(
         output={"hypothetical_answer": hypothetical_answer},
         usage={
@@ -118,8 +114,8 @@ def hyde_expand(question: str, model: str, parent_span: Optional[Any] = None) ->
             "completion_tokens": usage.get("completion_tokens", 0),
             "total_tokens": usage.get("total_tokens", 0),
         } if usage else None,
-        model=model_name,  # Use clean model name
-        provider=provider,  # Use correct provider
+        model=model,
+        provider="litellm"
     )
     
     return hypothetical_answer
@@ -295,8 +291,8 @@ def llm_rerank(question: str, hits: List[Dict], top_n: int, model: str, parent_s
             "completion_tokens": total_completion_tokens,
             "total_tokens": total_prompt_tokens + total_completion_tokens,
         },
-        model=get_model_name_for_opik(model),
-        provider=get_provider_from_model(model)
+        model=model,
+        provider="litellm"
     )
     
     return results
