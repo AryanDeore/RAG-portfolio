@@ -2,16 +2,20 @@
 Qdrant client wrapper to manage collection lifecycle, upserts, and ANN search.
 """
 
+import logging
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct, Filter
 from configs.settings import settings
 
+logger = logging.getLogger(__name__)
 DIST = {"Cosine": Distance.COSINE, "Dot": Distance.DOT, "Euclid": Distance.EUCLID}
 
 class QdrantStore:
     def __init__(self):
         # Convert qdrant_url to string (handles both AnyHttpUrl field and str property)
         url = str(settings.qdrant_url)
+        logger.debug(f"Connecting to Qdrant at: {url}")
+        logger.debug(f"Collection name: {settings.embed_collection}")
         self.client = QdrantClient(
             url=url,
             api_key=settings.qdrant_api_key
@@ -62,9 +66,23 @@ class QdrantStore:
         Returns:
             list[qdrant_client.http.models.ScoredPoint]: Scored hits with payloads and IDs.
         """
-        return self.client.search(
-            collection_name=settings.embed_collection,
-            query_vector=query_vec,
-            limit=k,
-            query_filter=filt
-        )
+        logger.debug(f"Searching collection '{settings.embed_collection}' with k={k}, vector_dim={len(query_vec)}")
+        try:
+            # Check if collection exists first
+            exists = self.client.collection_exists(settings.embed_collection)
+            if not exists:
+                error_msg = f"Collection '{settings.embed_collection}' does not exist"
+                logger.error(error_msg)
+                raise ValueError(error_msg)
+            
+            result = self.client.search(
+                collection_name=settings.embed_collection,
+                query_vector=query_vec,
+                limit=k,
+                query_filter=filt
+            )
+            logger.debug(f"Search returned {len(result)} results")
+            return result
+        except Exception as e:
+            logger.error(f"Search error: {type(e).__name__}: {e}")
+            raise

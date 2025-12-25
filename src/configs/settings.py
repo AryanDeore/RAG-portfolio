@@ -6,7 +6,7 @@ including chunking, embedding/retrieval, and Qdrant connection details.
 
 from functools import lru_cache
 from typing import Optional, Annotated, List
-from pydantic import Field, AliasChoices, AnyHttpUrl
+from pydantic import Field, AliasChoices, AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Port type with numeric bounds for future use
@@ -39,7 +39,7 @@ class Settings(BaseSettings):
 
     # ====================== Qdrant ======================
     # Use your Cloud URL here; for local Docker you can set QDRANT_API_KEY=None
-    qdrant_url: AnyHttpUrl = Field(..., alias="QDRANT_URL", description="Qdrant cluster URL")
+    qdrant_url_raw: Optional[str] = Field(None, alias="QDRANT_URL", description="Full Qdrant URL (overrides host/port if set)")
     qdrant_api_key: Optional[str] = Field(None, alias="QDRANT_API_KEY", description="Qdrant API key")
     qdrant_timeout: int = Field(30, alias="QDRANT_TIMEOUT")
     qdrant_host: str = Field("http://127.0.0.1", alias="QDRANT_HOST")
@@ -82,12 +82,21 @@ class Settings(BaseSettings):
     @property
     def qdrant_url(self) -> str:
         """
-        Compose the full Qdrant base URL from host and port.
+        Get Qdrant URL - use QDRANT_URL if set, otherwise compose from host and port.
+        For cloud URLs, use as-is without appending port.
 
         Returns:
-            str: e.g., "http://localhost:6333" or "https://xxx.cloud.qdrant.io:6333"
+            str: e.g., "http://localhost:6333" or "https://xxx.cloud.qdrant.io"
         """
-        # If host already includes a port (common in cloud URLs), keep it as-is.
+        # If QDRANT_URL is set, use it directly
+        if self.qdrant_url_raw:
+            return self.qdrant_url_raw
+        
+        # For cloud URLs, return host as-is (no port needed for HTTPS)
+        if ".cloud.qdrant.io" in self.qdrant_host or self.qdrant_host.startswith("https://"):
+            return self.qdrant_host
+        
+        # For local URLs, append port if not already present
         if ":" in self.qdrant_host.rsplit("/", 1)[-1]:
             return self.qdrant_host
         return f"{self.qdrant_host}:{self.qdrant_port}"
