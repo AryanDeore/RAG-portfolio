@@ -65,7 +65,7 @@ class Settings(BaseSettings):
     #====================== Generation ======================
     # -------------------- LLM Defaults------------------------
     llm_provider: str = Field("openai", alias="LLM_PROVIDER", description="Default LLM provider id for generation.")
-    llm_model: str = Field("gpt-4.1-nano", alias="LLM_MODEL", description="Default LiteLLM model id for generation.")
+    llm_model: str = Field("openai/gpt-4.1-nano", alias="LLM_MODEL", description="Default LiteLLM model id for generation.")
     llm_temperature: float = Field(0.2, alias="LLM_TEMPERATURE", description="Default temperature for generation.")
 
     # ====================== Chunking ======================

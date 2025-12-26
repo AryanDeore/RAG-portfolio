@@ -35,16 +35,29 @@ def _get_model_name(model: str) -> str:
     Convert model name to OpenRouter format if OPENROUTER_API_KEY is set.
     
     Args:
-        model: Model identifier (e.g., 'openai/gpt-4o-mini')
+        model: Model identifier (e.g., 'openai/gpt-4o-mini' or 'gpt-4.1-nano')
     
     Returns:
         Model identifier in OpenRouter format (e.g., 'openrouter/openai/gpt-4o-mini')
         or original model name if OpenRouter is not configured.
     """
     import os
-    if os.getenv("OPENROUTER_API_KEY") and model.startswith("openai/"):
-        # Convert openai/model to openrouter/openai/model
+    if not os.getenv("OPENROUTER_API_KEY"):
+        return model
+    
+    # Handle models that start with openai/
+    if model.startswith("openai/"):
         return f"openrouter/{model}"
+    
+    # Handle OpenAI models without prefix (like gpt-4.1-nano)
+    # These should be routed through OpenRouter as openrouter/openai/model
+    if model.startswith("gpt-"):
+        return f"openrouter/openai/{model}"
+    
+    # If already in openrouter format, return as-is
+    if model.startswith("openrouter/"):
+        return model
+    
     return model
 
 
