@@ -9,11 +9,11 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 # Copy dependency files
 COPY pyproject.toml uv.lock ./
 
-# Install project dependencies
-RUN uv sync --frozen --no-dev
-
 # Copy local code to the container image
 COPY . .
+
+# Install project dependencies
+RUN uv sync --frozen --no-dev
 
 # Expose port (Railway sets PORT env var automatically)
 EXPOSE 8000
