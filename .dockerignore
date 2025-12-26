@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+README.md
+LICENSE
+
+# Tests
+tests/
+test_*.py
+*_test.py
+
+# Local config and secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Qdrant local storage (not needed in container)
+qdrant_storage/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+
+# Railway (if exists)
+railway.json
+
+# Chunking outputs (can be regenerated)
+chunks.json
+
+# Notes and temporary files
+notes.md
+check_*.py
