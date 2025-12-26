@@ -20,6 +20,18 @@ from server.retrieval_pipeline import (
     cheap_rerank,
     llm_rerank,
 )
+import os
+from fastapi import Depends, Header, HTTPException
+
+def verify_api_key(x_api_key: str = Header(None)):
+    """Verify API key from request header."""
+    api_key = os.getenv("API_KEY")
+    if not api_key:
+        # If no API_KEY is set, skip validation (for development)
+        return True
+    if x_api_key != api_key:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+    return True
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -97,7 +109,7 @@ def _maybe_rerank(req: ChatRequest, hits: List[Dict], parent_span=None) -> List[
 
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat(req: ChatRequest) -> JSONResponse:
+async def chat(req: ChatRequest, _: bool = Depends(verify_api_key)) -> JSONResponse:
     """
     Handles non-streaming chat by retrieving context and returning a complete answer.
     
@@ -275,7 +287,7 @@ async def chat(req: ChatRequest) -> JSONResponse:
 
 
 @router.post("/chat/stream")
-def chat_stream(req: ChatRequest) -> StreamingResponse:
+def chat_stream(req: ChatRequest, _: bool = Depends(verify_api_key)) -> StreamingResponse:
     """
     Handles streaming chat by yielding incremental tokens as plain text.
     
