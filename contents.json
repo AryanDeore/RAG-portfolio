@@ -48,7 +48,7 @@
     },
     "company_description": "A health insurance marketplace optimizing real-time lead acquisition and automated customer support for ACA insurance agents",
     "projects_worked_on": "**Project 1: Real-time Probabilistic Entity Resolution:** Developed a sophisticated deduplication engine to identify 'bid-probing' attempts. By implementing the Fellegi-Sunter model via the Splink library, I built a system that calculates similarity scores across incoming pings to identify duplicate records in real-time.\n\n**Project 2: Conversational AI & IVR Automation:** Designed a secure, self-service IVR system that automates post-sale inquiries. The system uses real-time database lookups and automated authentication to provide application status updates, reducing call center overhead and allowing agents to focus on high-conversion traffic.",
-    "achievements": "**Model Reliability:** Established MLOps monitoring for the deduplication model, tracking metrics like cluster purity and pairwise precision.\n**Drift Detection:** Implemented statistical monitoring to alert the team to shifts in match distributions, protecting marketplace margins from evolving lead-generation patterns.",
+    "achievements": "**Model Reliability:** Established MLOps monitoring for the deduplication model, tracking metrics like cluster purity and pairwise precision.\n\n**Drift Detection:** Implemented statistical monitoring to alert the team to shifts in match distributions, protecting marketplace margins from evolving lead-generation patterns.",
     "tech_stack": ["Python", "Splink", "Snowflake", "Dagster", "dbt", "AWS", "SQL", "MLOps"],
     "tags": ["entity-resolution", "probabilistic-linkage", "conversational-ai", "mlops"]
   },

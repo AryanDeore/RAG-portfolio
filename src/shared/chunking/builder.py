@@ -8,7 +8,8 @@ from .entities import build_project_entities_and_tags
 def _row(
     pid: str, ptype: str, ptitle: str, field: str, idx: int, text: str,
     entities: List[str], tags: List[str], company: Optional[str], project: Optional[str],
-    last_updated: Optional[str], start: Optional[str] = None, end: Optional[str] = None
+    last_updated: Optional[str], start: Optional[str] = None, end: Optional[str] = None,
+    links: Optional[Dict[str, str]] = None
 ) -> Dict[str, Any]:
     """Construct a uniform chunk row dictionary.
     
@@ -26,11 +27,12 @@ def _row(
         last_updated (Optional[str]): Last updated timestamp.
         start (Optional[str]): Start date.
         end (Optional[str]): End date.
+        links (Optional[Dict[str, str]]): Optional links dictionary with 'live' and/or 'github' keys.
         
     Returns:
         Dict[str, Any]: Dict representing a chunk row ready for embedding/storage.
     """
-    return {
+    row = {
         "id": child_id(pid, field, idx, text),
         "parent_id": pid,
         "parent_type": ptype,
@@ -46,6 +48,9 @@ def _row(
         "date_end": end,
         "last_updated": last_updated,
     }
+    if links:
+        row["links"] = links
+    return row
 
 def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Pure builder that converts a loaded contents.json dict into flat chunks.
@@ -73,6 +78,16 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
         title = proj.get("title") or "project"
         pid = parent_id("project", title)
         entities, proj_tags = build_project_entities_and_tags(proj)
+        
+        # Extract links for this project to include in all chunks
+        links = proj.get("links") or {}
+        project_links: Optional[Dict[str, str]] = None
+        if links.get("live") or links.get("github"):
+            project_links = {}
+            if links.get("live"):
+                project_links["live"] = links["live"]
+            if links.get("github"):
+                project_links["github"] = links["github"]
 
         def add_field(field: str, text: Optional[str], idx_base: int) -> int:
             """Split a long field into chunks, preserving detected **Heading:** as 'section'.
@@ -97,7 +112,8 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
                     row = _row(
                         pid, "project", title, effective_field, idx, piece,
                         entities=entities, tags=proj_tags,
-                        company=None, project=title, last_updated=last_updated
+                        company=None, project=title, last_updated=last_updated,
+                        links=project_links
                     )
                     if section:
                         row["section"] = section
@@ -128,11 +144,12 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
                     rows.append(_row(
                         pid, "project", title, "feature", i, piece,
                         entities=entities, tags=proj_tags,
-                        company=None, project=title, last_updated=last_updated
+                        company=None, project=title, last_updated=last_updated,
+                        links=project_links
                     ))
                     i += 1
 
-        links = proj.get("links") or {}
+        # Keep the links chunk for backward compatibility, but links are now in all chunks
         link_text_parts: List[str] = []
         if links.get("live"):
             link_text_parts.append(f"Live: {links['live']}")
@@ -142,7 +159,8 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
             rows.append(_row(
                 pid, "project", title, "links", i, " | ".join(link_text_parts),
                 entities=entities, tags=proj_tags,
-                company=None, project=title, last_updated=last_updated
+                company=None, project=title, last_updated=last_updated,
+                links=project_links
             ))
 
     # --- EXPERIENCE ---

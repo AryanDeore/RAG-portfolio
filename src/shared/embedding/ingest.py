@@ -41,6 +41,7 @@ def _portfolio_to_ingest(d: dict) -> dict:
             "date_start": d.get("date_start"),
             "date_end": d.get("date_end"),
             "last_updated": d.get("last_updated"),
+            "links": d.get("links"),
         }
     }
 

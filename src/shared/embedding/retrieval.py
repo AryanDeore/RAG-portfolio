@@ -54,6 +54,7 @@ def search_chunks(query: str, k: int | None = None, parent_span: Optional[Any] =
             "chunk_id": h.payload.get("chunk_id"),
             "title": h.payload.get("title"),
             "text": h.payload.get("text"),
+            "links": h.payload.get("links"),
         }
         for h in hits
     ]
