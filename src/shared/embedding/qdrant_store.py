@@ -27,17 +27,29 @@ class QdrantStore:
 
         Args:
             recreate (bool): If True, forcibly recreates the collection (drops existing data).
-                             If False, attempts creation and ignores 'already exists' errors.
+                            If False, attempts creation and ignores 'already exists' errors.
 
         Returns:
             None
         """
         params = VectorParams(size=settings.embed_dim, distance=DIST[settings.embed_metric])
+        
         if recreate:
-            self.client.recreate_collection(collection_name=settings.embed_collection, vectors_config=params)
+            # Delete collection if it exists, then create
+            if self.client.collection_exists(collection_name=settings.embed_collection):
+                logger.info(f"Deleting existing collection: {settings.embed_collection}")
+                self.client.delete_collection(collection_name=settings.embed_collection)
+            self.client.create_collection(
+                collection_name=settings.embed_collection, 
+                vectors_config=params
+            )
         else:
+            # Try to create, ignore if already exists
             try:
-                self.client.create_collection(collection_name=settings.embed_collection, vectors_config=params)
+                self.client.create_collection(
+                    collection_name=settings.embed_collection, 
+                    vectors_config=params
+                )
             except Exception:
                 # Likely already exists; proceed without failing.
                 pass

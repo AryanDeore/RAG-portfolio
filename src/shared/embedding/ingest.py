@@ -41,6 +41,7 @@ def _portfolio_to_ingest(d: dict) -> dict:
             "date_start": d.get("date_start"),
             "date_end": d.get("date_end"),
             "last_updated": d.get("last_updated"),
+            "links": d.get("links"),
         }
     }
 
@@ -83,7 +84,7 @@ def docs_to_points(provider: FastEmbedProvider, docs: List[dict]) -> List[PointS
 def upsert_from_iter(iterable_docs: Iterable[Dict]) -> Tuple[int, int]:
     store = QdrantStore()
     provider = FastEmbedProvider()
-    store.create_or_recreate(recreate=False)
+    store.create_or_recreate(recreate=True)
     if hasattr(store, "ensure_collection_dims"):
         store.ensure_collection_dims(expected=384)
 

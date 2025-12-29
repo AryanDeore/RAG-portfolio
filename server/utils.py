@@ -19,7 +19,20 @@ def join_context(hits: List[Dict], cap_chars: int = 1800) -> str:
         t = (h.get("text") or "").strip()
         if not t:
             continue
-        seg = f"[{i}] {t}\n"
+        
+        # Append links if available
+        links_text = ""
+        links = h.get("links")
+        if links:
+            link_parts = []
+            if links.get("live"):
+                link_parts.append(f"Live: {links['live']}")
+            if links.get("github"):
+                link_parts.append(f"GitHub: {links['github']}")
+            if link_parts:
+                links_text = f" [{', '.join(link_parts)}]"
+        
+        seg = f"[{i}] {t}{links_text}\n"
         if used + len(seg) > cap_chars:
             break
         out.append(seg)
@@ -51,8 +64,9 @@ def build_messages(question: str, history: List[Dict], context: str) -> List[Dic
                 "Behavior:\n"
                 "- Be concise and factual. Prefer enumerated lists.\n"
                 "- If the query is vague but clearly portfolio-scoped, default to brief summaries (then offer drill-downs).\n"
-                "- When listing items, count them first: 'I have X projects:' then list them.\n"
-                "- If you cannot find the requested information in CONTEXT, explicitly state that.\n\n"
+                # "- When listing items, count them first: 'I have X projects:' then list them.\n"
+                "- If you cannot find the requested information in CONTEXT, explicitly state that.\n"
+                "- When discussing projects, ALWAYS include the Live and GitHub links if they are provided in the CONTEXT.\n\n"
                 "Assistant style guide:\n"
                 "- Start with a one-line answer.\n"
                 "- Then provide a tight bullet list or mini-cards.\n"
