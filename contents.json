@@ -1,61 +1,93 @@
 {
-    "metadata": {
-      "last_updated": "2025-10-14"
-    },
     
     "bio": {
       "name": "Aryan",
-      "summary": "I am a AI engineer with 4 years of experience in AWS, Data Engineering and Machine Learning. I live in USA I am currently working at American Health Marketplace a as a Senior Software Engineer. Contact me on LinkedIn at aryandeore or Email as aryandeore.work@gmail.com."
+      "summary": "I am an AI Engineer and Databricks Certified Machine Learning Professional with over 4 years of experience bridging the gap between Data Engineering and Artificial Intelligence. My competitive advantage is my mastery of the 'supporting fields' required to build production-grade AI—specifically Data Engineering, MLOps, and Cloud Infrastructure.\n\nI don't just build models; I architect the ecosystems that sustain them. I utilize **Dagster** to orchestrate complex machine learning workflows, treating data assets with the same rigor as software products. I ensure system reliability through advanced **MLOps and LLMOps** practices, leveraging **MLflow** for experiment tracking and **Comet Opik** for comprehensive LLM evaluation and monitoring.\n\nMy technical foundation is built on **AWS** and **Databricks**, allowing me to scale data-intensive applications seamlessly. Currently, as an Analytics Engineer at American Health Marketplace, I apply these principles to solve high-value business problems, such as implementing probabilistic record linkage (Splink) for bid optimization. I am an expert in transforming raw code into deployable, observable, and scalable AI solutions. Contact me on LinkedIn at aryandeore or Email at aryandeore.work@gmail.com."
     },
   
     "projects": [
       {
-        "title": "RAG Portfolio",
-        "tagline": "A portfolio website that showcases my projects and skills",
-        "description": 
-        "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit Kubernetes. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 2: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 3: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "problem": "What problem does this solve? What gap does it fill?",
-        "tech_stack": ["Next.js", "FastAPI", "PostgreSQL", "AWS Lambda"],
-        "architecture": "**Topic 1: ** Docker ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 2: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "features":
-          "**Topic 1: ** Machine Learning in LLMs consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "challenges": "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n**Topic 2: **Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "title": "RAG-Based Portfolio Assistant",
+        "tagline": "A production-grade RAG application that allows users to 'interview' my resume.",
+        "description": "**Concept:** An interactive AI system that transforms my static portfolio into a conversational interface. Users can ask natural language questions about my experience, and the system retrieves precise answers grounded in my professional history.\n\n**The AI Engine:** Built on **Qdrant** for vector storage, utilizing a custom Schema-Aware Parent-Child chunking strategy to maintain context integrity. Embeddings are generated via **FastEmbed** (BAAI/bge-small-en-v1.5), and generation is handled by **LiteLLM** and **OpenRouter**, enabling rapid model experimentation and fallback configurations.\n\n**Observability:** Integrated **Comet Opik** for comprehensive LLMOps, logging every trace to monitor cost per query and retrieval quality.",
+        "problem": "Static resumes cannot answer specific questions or demonstrate technical depth in real-time. This project serves a dual purpose: it acts as a dynamic information retrieval system for recruiters and a live proof-of-work showcasing my ability to build, deploy, and monitor full-stack AI applications.",
+        "tech_stack": [
+          "Python",
+          "FastAPI",
+          "Next.js",
+          "Qdrant Vector Database",
+          "LiteLLM",
+          "OpenRouter",
+          "Comet Opik LLMOps",
+          "GitHub Actions CI/CD"
+        ],
+        "architecture": "**Schema-Aware Data Pipeline:** Unlike standard recursive splitting, I implemented a hierarchical indexing strategy. The system respects the JSON schema of my resume, creating 'Parent' chunks for broad context (e.g., full job entries) and 'Child' chunks for precise retrieval. This ensures that when a skill is retrieved, it remains linked to the correct company and date range.\n\n**Inference & Retrieval:** User queries undergo embedding and vector similarity search (Cosine). The system retrieves the parent context of the matched child chunks to answer the user. Responses are streamed via Server-Sent Events (SSE) for real-time feedback.\n\n**Infrastructure:** The frontend (Next.js/Chadcn-UI) is deployed on **Vercel**, while the backend (FastAPI) runs on **Railway**. CI/CD is managed via GitHub Actions",
+        "features": "**Real-Time Streaming:** Optimized for low latency (<1 second Time-To-First-Token) by streaming LLM responses directly to the frontend client.\n\n**Verified Citations:** To prevent hallucinations, the system cites its sources, providing direct links to the specific GitHub repositories or live demos referenced in the answer.\n\n**Safety Guardrails:** Integrated OpenAI's Moderation endpoint to intercept and block harmful queries (hate speech, violence) before they reach the inference layer",
+        "challenges": "**Context Fragmentation:** Standard text chunking severed the semantic link between specific technologies and the projects they were used in. I solved this by implementing **Schema-Aware Parent-Child Chunking**, where child chunks inherit metadata from their parent nodes, ensuring precise retrieval without losing hierarchy.\n\n**Provider Fragmentation:** Hardcoding a single LLM provider limits flexibility. I utilized **LiteLLM** as a unified interface to **OpenRouter**, allowing me to swap models (e.g., from GPT-4 to Llama 3) via configuration without rewriting backend code.",
         "outcomes": {
-          "metrics": "Quantifiable results (users, performance, scale)",
-          "impact": "Business or user impact"
+          "metrics": "<1s Latency (Streaming), ~$0.001 Avg Cost per Query",
+          "impact": "Live demonstration of Full-Stack AI Engineering skills (Vector Search, RAG, LLMOps)"
         },
         "links": {
-          "live": "https://example.com",
-          "github": "https://github.com/..."
+          "live": "https://www.aryandeore.ai/",
+          "github": "https://github.com/AryanDeore/RAG-portfolio"
         },
-        "tags": ["full-stack", "microservices", "real-time", "cloud"]
+        "tags": ["rag", "vector-database", "llmops", "full-stack-ai", "evals"]
       }
     ],
-  
+
     "experience": [
-      {
-        "id": "exp-001",
-        "company": "Company Name",
-        "position": "Senior Software Engineer",
-        "location": "City, Country",
-        "date_range": {
-          "start": "2022-01",
-          "end": "2024-06"
-        },
-        "company_description": "American Health Marketplace is a healthcare technology company that provides a platform for healthcare providers to manage their patients and claims.",
-        "projects_worked_on":
-          "**Project 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "achievements":
-          "**Topic 1: ** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "tech_stack": ["Python", "FastAPI", "PostgreSQL", "AWS Lambda"],
-        "tags": ["backend", "devops", "team-lead"]
-      }
-    ],
+  {
+    "id": "exp-001",
+    "company": "American Health Marketplace",
+    "position": "AI and Data Engineer",
+    "location": "Florida, US",
+    "date_range": {
+      "start": "2025-02",
+      "end": "Present"
+    },
+    "company_description": "A health insurance marketplace optimizing real-time lead acquisition and automated customer support for ACA insurance agents",
+    "projects_worked_on": "**Project 1: Real-time Probabilistic Entity Resolution:** Developed a sophisticated deduplication engine to identify 'bid-probing' attempts. By implementing the Fellegi-Sunter model via the Splink library, I built a system that calculates similarity scores across incoming pings to identify duplicate records in real-time.\n\n**Project 2: Conversational AI & IVR Automation:** Designed a secure, self-service IVR system that automates post-sale inquiries. The system uses real-time database lookups and automated authentication to provide application status updates, reducing call center overhead and allowing agents to focus on high-conversion traffic.",
+    "achievements": "**Model Reliability:** Established MLOps monitoring for the deduplication model, tracking metrics like cluster purity and pairwise precision.\n**Drift Detection:** Implemented statistical monitoring to alert the team to shifts in match distributions, protecting marketplace margins from evolving lead-generation patterns.",
+    "tech_stack": ["Python", "Splink", "Snowflake", "Dagster", "dbt", "AWS", "SQL", "MLOps"],
+    "tags": ["entity-resolution", "probabilistic-linkage", "conversational-ai", "mlops"]
+  },
+  {
+    "id": "exp-002",
+    "company": "WindRiver",
+    "position": "Data Intern",
+    "location": "California, United States",
+    "date_range": {
+      "start": "2023-07",
+      "end": "2023-12"
+    },
+    "company_description": "An edge device solutions provider",
+    "projects_worked_on": "**Modern Data Stack Orchestration:** Built scalable data extraction and transformation pipelines using **Dagster**. I integrated **dlt (data load tools)** and **Fivetran** for high-fidelity data ingestion, ensuring that datasets were model-ready for downstream Data Science consumers.",
+    "achievements": "Implemented run-time validation using dbt contracts and Snowflake constraints, reducing CI runtime by 50% through dbt Slim CI. This halved deployment time",
+    "tech_stack": ["Dagster", "dbt", "dlt", "Fivetran", "Python", "Snowflake"],
+    "tags": ["mlops", "data-engineering", "orchestration"]
+  },
+  {
+    "id": "exp-003",
+    "company": "Quantiphi (Client: Bayer Pharmaceuticals)",
+    "position": "Machine Learning Engineer",
+    "location": "India",
+    "date_range": {
+      "start": "2020-07",
+      "end": "2022-07"
+    },
+    "company_description": "An AI-first digital solutions company; worked specifically with the healthcare division for Bayer Pharmaceuticals.",
+    "projects_worked_on": "**Project 1: Computer Vision for COVID-19 Detection:** Developed a multi-phase CV pipeline for DICOM medical imagery. This included an automated PII masking engine to de-identify patient data and a Deep Learning object detection model to identify bounding box coordinates for COVID-19 strains.\n\n**Project 2: AI-Enhanced Radiology Marketplace:** Built a metadata-enriched platform that allowed researchers to query and retrieve specific medical imagery (e.g., 'Lung scans of 30yo males') for training large-scale diagnostic models.",
+    "achievements": "**Data De-identification:** Engineered a HIPAA-compliant ETL process that automatically masked sensitive information within pixel data of lung and breast scans",
+    "tech_stack": ["Python", "OpenCV", "Deep Learning", "DICOM", "AWS", "SQL", "Computer Vision"],
+    "tags": ["computer-vision", "healthcare-ai", "deep-learning", "object-detection"]
+  }
+],
   
     "skills": {
       "languages": "[Python, SQL]",
-      "frameworks": "[FastAPI, dbt]",
-      "tools_and_platforms": "[AWS, GCP, Docker, Kubernetes, GitHub]"
+      "frameworks": "[FastAPI, dbt, LiteLLM, OpenRouter, Comet Opik, MLflow, Splink]",
+      "tools_and_platforms": "[AWS, GCP, Docker, Kubernetes, GitHub, Qdrant, FastEmbed, Dagster, dlt, Fivetran, Snowflake, Databricks, GCP, AWS, Railway, Vercel]"
     },
   
     "education": [
