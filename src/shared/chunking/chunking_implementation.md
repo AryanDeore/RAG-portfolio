@@ -14,6 +14,7 @@ Transforms structured portfolio data (`contents.json`) into atomic, embeddable c
 **Why?** Enables structured retrieval (fetch entire sections), atomic search units, and filtering without duplication.
 
 ---
+Things to keep in mind while chunking. Points should be split with "new para split" which is \n\n
 
 ## Components
 

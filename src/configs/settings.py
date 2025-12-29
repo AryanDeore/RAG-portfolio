@@ -68,6 +68,9 @@ class Settings(BaseSettings):
     llm_model: str = Field("openai/gpt-4.1-nano", alias="LLM_MODEL", description="Default LiteLLM model id for generation.")
     llm_temperature: float = Field(0.2, alias="LLM_TEMPERATURE", description="Default temperature for generation.")
 
+    # ====================== Comet ML / Logging ======================
+    comet_project_name: str = Field("Default Project", alias="COMET_PROJECT_NAME", description="Comet ML project name for experiment tracking")
+
     # ====================== Chunking ======================
     chunk_max_chars_paragraph: int = Field(default=700, description="Hard cap for paragraph-sized chunks")
     chunk_split_long_bullets: bool = Field(default=False, description="Split long bullets into child chunks")

@@ -1,2 +1,2 @@
 # RAG-portfolio
-A RAG based application to answer questions about my portfolio
+A RAG application that allows users to 'interview' my resume
