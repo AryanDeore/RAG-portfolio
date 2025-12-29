@@ -83,7 +83,7 @@ def docs_to_points(provider: FastEmbedProvider, docs: List[dict]) -> List[PointS
 def upsert_from_iter(iterable_docs: Iterable[Dict]) -> Tuple[int, int]:
     store = QdrantStore()
     provider = FastEmbedProvider()
-    store.create_or_recreate(recreate=False)
+    store.create_or_recreate(recreate=True)
     if hasattr(store, "ensure_collection_dims"):
         store.ensure_collection_dims(expected=384)
 

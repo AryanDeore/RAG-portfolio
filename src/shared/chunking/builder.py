@@ -91,9 +91,11 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
             for para in para_split(text):
                 section, body = detect_md_heading(para)
                 payload = body if section else para
+                # Use hierarchical field name when section is detected
+                effective_field = f"{field}:{section}" if section else field
                 for piece in pack_sentences(payload):
                     row = _row(
-                        pid, "project", title, field, idx, piece,
+                        pid, "project", title, effective_field, idx, piece,
                         entities=entities, tags=proj_tags,
                         company=None, project=title, last_updated=last_updated
                     )
@@ -114,14 +116,21 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
         i = add_field("outcomes.metrics", outcomes.get("metrics"), i)
         i = add_field("outcomes.impact", outcomes.get("impact"), i)
 
-        for feat in proj.get("features", []) or []:
-            for piece in bullet_children(feat):
-                rows.append(_row(
-                    pid, "project", title, "feature", i, piece,
-                    entities=entities, tags=proj_tags,
-                    company=None, project=title, last_updated=last_updated
-                ))
-                i += 1
+        # Handle features - can be a string or a list
+        features = proj.get("features")
+        if isinstance(features, str):
+            # Treat as a string field with section detection
+            i = add_field("features", features, i)
+        elif isinstance(features, list):
+            # Handle as list of bullet items
+            for feat in features:
+                for piece in bullet_children(feat):
+                    rows.append(_row(
+                        pid, "project", title, "feature", i, piece,
+                        entities=entities, tags=proj_tags,
+                        company=None, project=title, last_updated=last_updated
+                    ))
+                    i += 1
 
         links = proj.get("links") or {}
         link_text_parts: List[str] = []
@@ -164,9 +173,11 @@ def build_children(contents: Dict[str, Any]) -> List[Dict[str, Any]]:
             for para in para_split(text):
                 section, body = detect_md_heading(para)
                 payload = body if section else para
+                # Use hierarchical field name when section is detected
+                effective_field = f"{field_name}:{section}" if section else field_name
                 for piece in pack_sentences(payload):
                     row = _row(
-                        pid, "experience", title, field_name, idx, piece,
+                        pid, "experience", title, effective_field, idx, piece,
                         entities=entities, tags=(exp.get("tags") or []),
                         company=company, project=None, last_updated=last_updated,
                         start=start, end=end
