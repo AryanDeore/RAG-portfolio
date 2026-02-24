@@ -1,14 +1,16 @@
 # tests/embedding/test_retrieval.py
-# Tests for KNN retrieval pipeline that embeds queries and searches Qdrant.
+# Tests for hybrid retrieval pipeline that embeds queries and searches Qdrant.
 
 import sys
 import importlib.util
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
-# Mock dependencies before importing
-sys.modules['fastembed'] = MagicMock()
-sys.modules['fastembed'].TextEmbedding = MagicMock()
+# Mock fastembed before importing
+mock_fastembed = MagicMock()
+mock_fastembed.TextEmbedding = MagicMock()
+mock_fastembed.SparseTextEmbedding = MagicMock()
+sys.modules['fastembed'] = mock_fastembed
 
 # Set up package structure for relative imports
 root = Path(__file__).parent.parent.parent
@@ -46,6 +48,7 @@ def test_search_chunks_uses_default_k_from_settings():
     """Verify search_chunks uses default k from settings when None is provided."""
     mock_provider = Mock()
     mock_provider.embed_query = Mock(return_value=[0.1, 0.2, 0.3])
+    mock_provider.embed_query_sparse = Mock(return_value=([1, 2], [0.5, 0.3]))
     mock_store = Mock()
     mock_hit = MagicMock()
     mock_hit.id = "test_id"
@@ -55,25 +58,36 @@ def test_search_chunks_uses_default_k_from_settings():
     with patch("src.shared.embedding.retrieval.FastEmbedProvider", return_value=mock_provider):
         with patch("src.shared.embedding.retrieval.QdrantStore", return_value=mock_store):
             with patch("src.shared.embedding.retrieval.settings") as mock_settings:
-                mock_settings.retrieval_k = 5
+                mock_settings.search_top_k = 5
+                mock_settings.embed_collection_read = ""
+                mock_settings.embed_collection = "test"
                 result = retrieval.search_chunks("test query", k=None)
-                mock_store.search.assert_called_once_with([0.1, 0.2, 0.3], k=5)
+                mock_store.search.assert_called_once_with(
+                    [0.1, 0.2, 0.3], k=5, sparse_vec=([1, 2], [0.5, 0.3])
+                )
 
 def test_search_chunks_uses_provided_k():
     """Verify search_chunks uses provided k value instead of default."""
     mock_provider = Mock()
     mock_provider.embed_query = Mock(return_value=[0.1, 0.2, 0.3])
+    mock_provider.embed_query_sparse = Mock(return_value=([1], [0.5]))
     mock_store = Mock()
     mock_store.search = Mock(return_value=[])
     with patch("src.shared.embedding.retrieval.FastEmbedProvider", return_value=mock_provider):
         with patch("src.shared.embedding.retrieval.QdrantStore", return_value=mock_store):
-            result = retrieval.search_chunks("test query", k=10)
-            mock_store.search.assert_called_once_with([0.1, 0.2, 0.3], k=10)
+            with patch("src.shared.embedding.retrieval.settings") as mock_settings:
+                mock_settings.embed_collection_read = ""
+                mock_settings.embed_collection = "test"
+                result = retrieval.search_chunks("test query", k=10)
+                mock_store.search.assert_called_once_with(
+                    [0.1, 0.2, 0.3], k=10, sparse_vec=([1], [0.5])
+                )
 
 def test_search_chunks_result_structure():
     """Verify search_chunks returns dicts with id, score, doc_id, chunk_id, title, and text fields."""
     mock_provider = Mock()
     mock_provider.embed_query = Mock(return_value=[0.1, 0.2, 0.3])
+    mock_provider.embed_query_sparse = Mock(return_value=([1], [0.5]))
     mock_store = Mock()
     mock_hit1 = MagicMock()
     mock_hit1.id = "id1"
@@ -86,30 +100,42 @@ def test_search_chunks_result_structure():
     mock_store.search = Mock(return_value=[mock_hit1, mock_hit2])
     with patch("src.shared.embedding.retrieval.FastEmbedProvider", return_value=mock_provider):
         with patch("src.shared.embedding.retrieval.QdrantStore", return_value=mock_store):
-            result = retrieval.search_chunks("test query", k=2)
-            assert len(result) == 2
-            assert result[0]["id"] == "id1"
-            assert result[0]["score"] == 0.9
-            assert result[0]["doc_id"] == "doc1"
-            assert result[0]["chunk_id"] == 0
-            assert result[0]["title"] == "Title 1"
-            assert result[0]["text"] == "Text 1"
+            with patch("src.shared.embedding.retrieval.settings") as mock_settings:
+                mock_settings.embed_collection_read = ""
+                mock_settings.embed_collection = "test"
+                result = retrieval.search_chunks("test query", k=2)
+                assert len(result) == 2
+                assert result[0]["id"] == "id1"
+                assert result[0]["score"] == 0.9
+                assert result[0]["doc_id"] == "doc1"
+                assert result[0]["chunk_id"] == 0
+                assert result[0]["title"] == "Title 1"
+                assert result[0]["text"] == "Text 1"
 
 def test_search_chunks_calls_embed_query():
-    """Verify search_chunks calls embed_query with the provided query string."""
+    """Verify search_chunks calls embed_query and embed_query_sparse with the query."""
     mock_provider = Mock()
     mock_provider.embed_query = Mock(return_value=[0.1, 0.2, 0.3])
+    mock_provider.embed_query_sparse = Mock(return_value=([1], [0.5]))
     mock_store = Mock()
     mock_store.search = Mock(return_value=[])
     with patch("src.shared.embedding.retrieval.FastEmbedProvider", return_value=mock_provider):
         with patch("src.shared.embedding.retrieval.QdrantStore", return_value=mock_store):
-            retrieval.search_chunks("what is python?", k=5)
-            mock_provider.embed_query.assert_called_once_with("what is python?")
+            with patch("src.shared.embedding.retrieval.settings") as mock_settings:
+                mock_settings.embed_collection_read = ""
+                mock_settings.embed_collection = "test"
+                retrieval.search_chunks("what is python?", k=5)
+                # embed_query now takes parent_span kwarg
+                mock_provider.embed_query.assert_called_once()
+                assert mock_provider.embed_query.call_args[0][0] == "what is python?"
+                mock_provider.embed_query_sparse.assert_called_once()
+                assert mock_provider.embed_query_sparse.call_args[0][0] == "what is python?"
 
 def test_search_chunks_handles_missing_payload_fields():
     """Verify search_chunks handles missing optional payload fields gracefully using .get()."""
     mock_provider = Mock()
     mock_provider.embed_query = Mock(return_value=[0.1, 0.2, 0.3])
+    mock_provider.embed_query_sparse = Mock(return_value=([1], [0.5]))
     mock_store = Mock()
     mock_hit = MagicMock()
     mock_hit.id = "id1"
@@ -118,9 +144,11 @@ def test_search_chunks_handles_missing_payload_fields():
     mock_store.search = Mock(return_value=[mock_hit])
     with patch("src.shared.embedding.retrieval.FastEmbedProvider", return_value=mock_provider):
         with patch("src.shared.embedding.retrieval.QdrantStore", return_value=mock_store):
-            result = retrieval.search_chunks("test", k=1)
-            assert result[0]["doc_id"] == "doc1"
-            assert result[0]["chunk_id"] is None
-            assert result[0]["title"] is None
-            assert result[0]["text"] is None
-
+            with patch("src.shared.embedding.retrieval.settings") as mock_settings:
+                mock_settings.embed_collection_read = ""
+                mock_settings.embed_collection = "test"
+                result = retrieval.search_chunks("test", k=1)
+                assert result[0]["doc_id"] == "doc1"
+                assert result[0]["chunk_id"] is None
+                assert result[0]["title"] is None
+                assert result[0]["text"] is None

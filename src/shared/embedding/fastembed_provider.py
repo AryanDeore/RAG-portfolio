@@ -3,7 +3,7 @@ Thin wrapper around FastEmbed that applies instruction prefixes ('passage:'/'que
 Optimized for AWS Lambda with singleton pattern to avoid reloading models.
 """
 
-from fastembed import TextEmbedding
+from fastembed import TextEmbedding, SparseTextEmbedding
 from configs.settings import settings
 import os
 from pathlib import Path
@@ -41,7 +41,7 @@ class FastEmbedProvider:
                 # Fall back to None if /opt/python isn't available
                 cache_dir = None
         
-        # Initialize model with error handling
+        # Initialize dense model with error handling
         try:
             self.model = TextEmbedding(
                 model_name=settings.embed_model,
@@ -56,7 +56,22 @@ class FastEmbedProvider:
                 )
             else:
                 raise
-        
+
+        # Initialize BM25 sparse model
+        try:
+            self.sparse_model = SparseTextEmbedding(
+                model_name="Qdrant/bm25",
+                cache_dir=cache_dir
+            )
+        except (OSError, PermissionError):
+            if cache_dir is not None:
+                self.sparse_model = SparseTextEmbedding(
+                    model_name="Qdrant/bm25",
+                    cache_dir=None
+                )
+            else:
+                raise
+
         FastEmbedProvider._initialized = True
 
     def embed_passages(self, texts: list[str]) -> list[list[float]]:
@@ -106,12 +121,65 @@ class FastEmbedProvider:
             )
         
         embedding = list(self.model.embed([f"query: {query}"]))[0]
-        
+
         span.end(
             output={
                 "embedding_dim": len(embedding),
                 "embedding_norm": sum(x * x for x in embedding) ** 0.5,
             }
         )
-        
+
         return embedding
+
+    def embed_passages_sparse(self, texts: list[str]) -> list[tuple[list[int], list[float]]]:
+        """
+        Embed passages with BM25 sparse model for keyword matching.
+
+        Args:
+            texts (list[str]): Plain chunk strings to embed.
+
+        Returns:
+            list[tuple[list[int], list[float]]]: Sparse vectors as (indices, values) tuples.
+        """
+        results = list(self.sparse_model.embed(texts))
+        return [
+            (r.indices.tolist(), r.values.tolist())
+            for r in results
+        ]
+
+    def embed_query_sparse(self, query: str, parent_span=None) -> tuple[list[int], list[float]]:
+        """
+        Embed a single query with BM25 sparse model.
+
+        Args:
+            query (str): The user query.
+            parent_span: Optional parent span for nested tracing.
+
+        Returns:
+            tuple[list[int], list[float]]: Sparse vector as (indices, values).
+        """
+        if parent_span:
+            span = parent_span.span(
+                name="embed_query_sparse",
+                type="tool",
+                input={"query": query},
+                metadata={"sparse_model": "Qdrant/bm25"}
+            )
+        else:
+            from opik import Opik
+            span = Opik().span(
+                name="embed_query_sparse",
+                type="tool",
+                input={"query": query},
+                metadata={"sparse_model": "Qdrant/bm25"}
+            )
+
+        result = list(self.sparse_model.query_embed(query))[0]
+        indices = result.indices.tolist()
+        values = result.values.tolist()
+
+        span.end(
+            output={"num_nonzero": len(indices)}
+        )
+
+        return (indices, values)

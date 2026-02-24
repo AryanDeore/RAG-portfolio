@@ -8,6 +8,7 @@ dependencies = [
     "fastapi>=0.119.0",
     "fastembed>=0.7.3",
     "litellm>=1.78.0",
+    "openai>=1.30.0",
     "opik>=1.8.68",
     "pydantic>=2.12.0",
     "pydantic-settings>=2.11.0",
