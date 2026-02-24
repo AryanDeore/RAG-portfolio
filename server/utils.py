@@ -1,16 +1,50 @@
 """Small utilities for context building and message assembly."""
 
+import os
+from pathlib import Path
 from typing import Dict, List
+
+_PROMPT_DIR = Path(__file__).resolve().parent.parent / "system_prompts"
+
+
+def _load_prompt(name: str) -> str:
+    """Read a prompt file from the system_prompts/ directory."""
+    return (_PROMPT_DIR / name).read_text(encoding="utf-8").strip()
+
+
+def get_model_name(model: str) -> str:
+    """
+    Convert model name to OpenRouter format if OPENROUTER_API_KEY is set.
+
+    Args:
+        model: Model identifier (e.g., 'openai/gpt-4o-mini' or 'gpt-4.1-nano')
+
+    Returns:
+        Model identifier in OpenRouter format or original model name.
+    """
+    if not os.getenv("OPENROUTER_API_KEY"):
+        return model
+
+    if model.startswith("openai/"):
+        return f"openrouter/{model}"
+
+    if model.startswith("gpt-"):
+        return f"openrouter/openai/{model}"
+
+    if model.startswith("openrouter/"):
+        return model
+
+    return model
 
 
 def join_context(hits: List[Dict], cap_chars: int = 1800) -> str:
     """
     Builds a capped context string from retrieval hits; returns a string under cap_chars.
-    
+
     Args:
         hits (List[Dict]): List of retrieval hit dictionaries containing 'text' field.
         cap_chars (int): Maximum character limit for the output context string. Defaults to 1800.
-    
+
     Returns:
         str: Formatted context string with numbered segments, or "(no relevant context found)" if empty.
     """
@@ -19,7 +53,7 @@ def join_context(hits: List[Dict], cap_chars: int = 1800) -> str:
         t = (h.get("text") or "").strip()
         if not t:
             continue
-        
+
         # Append links if available
         links_text = ""
         links = h.get("links")
@@ -31,7 +65,7 @@ def join_context(hits: List[Dict], cap_chars: int = 1800) -> str:
                 link_parts.append(f"GitHub: {links['github']}")
             if link_parts:
                 links_text = f" [{', '.join(link_parts)}]"
-        
+
         seg = f"[{i}] {t}{links_text}\n"
         if used + len(seg) > cap_chars:
             break
@@ -43,40 +77,17 @@ def join_context(hits: List[Dict], cap_chars: int = 1800) -> str:
 def build_messages(question: str, history: List[Dict], context: str) -> List[Dict]:
     """
     Assembles OpenAI-compatible chat messages list from system, context, history, and user question.
-    
+
     Args:
         question (str): User's question to be added as the final message.
         history (List[Dict]): List of previous chat messages with 'role' and 'content' fields.
         context (str): Retrieved context information to include in system message.
-    
+
     Returns:
         List[Dict]: OpenAI-compatible messages list with system prompts, context, history, and user question.
     """
     msgs: List[Dict] = [
-        {
-            "role": "system",
-            "content": (
-                "You are \"Aryan's Portfolio Assistant.\"\n\n"
-                "Scope:\n"
-                "- Answer ONLY using Aryan's portfolio data from the CONTEXT.\n"
-                "- Assume \"I\", \"me\", \"my\", and any unnamed \"the project/role/company\" refer to Aryan.\n"
-                "- If the user mentions a different person, treat it as a comparison request (Aryan vs X).\n\n"
-                "Behavior:\n"
-                "- Be concise and factual. Prefer enumerated lists.\n"
-                "- If the query is vague but clearly portfolio-scoped, default to brief summaries (then offer drill-downs).\n"
-                # "- When listing items, count them first: 'I have X projects:' then list them.\n"
-                "- If you cannot find the requested information in CONTEXT, explicitly state that.\n"
-                "- When discussing projects, ALWAYS include the Live and GitHub links if they are provided in the CONTEXT.\n\n"
-                "Assistant style guide:\n"
-                "- Start with a one-line answer.\n"
-                "- Then provide a tight bullet list or mini-cards.\n"
-                "- End with 2–3 smart follow-ups (drill-down options).\n\n"
-                "Data context:\n"
-                "- Source of truth: contents.json (bio, projects, experience, skills, education).\n"
-                "- The CONTEXT section below contains the ONLY data you can use.\n"
-                "- When uncertain, state what you can't find and propose close matches from the CONTEXT."
-            ),
-        },
+        {"role": "system", "content": _load_prompt("generation.txt")},
         {"role": "system", "content": f"CONTEXT:\n{context}"},
     ]
     msgs.extend(history[-8:])  # keep recent turns small

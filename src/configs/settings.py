@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     qdrant_port: int = Field(6333, alias="QDRANT_PORT")
 
     # Collection names: writer and (optionally) a stable reader alias
-    embed_collection: str = Field("rag_portfolio_v1", alias="EMBED_COLLECTION")
+    embed_collection: str = Field("hybrid_retrieval_collection", alias="EMBED_COLLECTION")
     embed_collection_read: str = Field("portfolio_current", alias="EMBED_COLLECTION_READ")
     
     # -------------------- Embedding --------------------------

@@ -1,5 +1,5 @@
 """
-Simple KNN retrieval pipeline that embeds a query and searches top-k chunks in Qdrant.
+Hybrid KNN+BM25 retrieval pipeline that embeds a query (dense + sparse) and searches top-k chunks in Qdrant.
 """
 
 from typing import List, Dict, Optional, Any
@@ -13,7 +13,7 @@ opik_client = Opik()
 
 def search_chunks(query: str, k: int | None = None, parent_span: Optional[Any] = None) -> List[Dict]:
     """
-    Retrieve the top-k nearest chunks for a natural language query.
+    Retrieve the top-k nearest chunks using hybrid (dense + BM25 + RRF) search.
 
     Args:
         query (str): User information need expressed in plain English.
@@ -31,6 +31,7 @@ def search_chunks(query: str, k: int | None = None, parent_span: Optional[Any] =
             input={"query": query, "k": k},
             metadata={
                 "collection": settings.embed_collection_read or settings.embed_collection,
+                "search_type": "hybrid",
             }
         )
     else:
@@ -40,12 +41,16 @@ def search_chunks(query: str, k: int | None = None, parent_span: Optional[Any] =
             input={"query": query, "k": k},
             metadata={
                 "collection": settings.embed_collection_read or settings.embed_collection,
+                "search_type": "hybrid",
             }
         )
-    
-    qvec = FastEmbedProvider().embed_query(query, parent_span=span)
-    hits = QdrantStore().search(qvec, k=k)
-    
+
+    provider = FastEmbedProvider()
+    qvec = provider.embed_query(query, parent_span=span)
+    sparse_qvec = provider.embed_query_sparse(query, parent_span=span)
+
+    hits = QdrantStore().search(qvec, k=k, sparse_vec=sparse_qvec)
+
     results = [
         {
             "id": h.id,
@@ -58,7 +63,7 @@ def search_chunks(query: str, k: int | None = None, parent_span: Optional[Any] =
         }
         for h in hits
     ]
-    
+
     # Log retrieval results
     span.end(
         output={
@@ -72,5 +77,5 @@ def search_chunks(query: str, k: int | None = None, parent_span: Optional[Any] =
             "actual_results": len(results),
         }
     )
-    
+
     return results

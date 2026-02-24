@@ -1,6 +1,6 @@
 from typing import Iterable, Dict, List, Tuple
 import logging
-from qdrant_client.models import PointStruct
+from qdrant_client.models import PointStruct, SparseVector
 from .utils import sha1, now_s, batched, make_point_id
 from .fastembed_provider import FastEmbedProvider
 from .qdrant_store import QdrantStore
@@ -55,13 +55,15 @@ def docs_to_points(provider: FastEmbedProvider, docs: List[dict]) -> List[PointS
     if not normed:
         return []
 
-    vectors = provider.embed_passages([n["text"] for n in normed])
+    texts = [n["text"] for n in normed]
+    dense_vectors = provider.embed_passages(texts)
+    sparse_vectors = provider.embed_passages_sparse(texts)
 
     pts: List[PointStruct] = []
-    for n, vec in zip(normed, vectors):
-        if hasattr(vec, "tolist"):
-            vec = vec.tolist()
-        vec = [float(x) for x in vec]
+    for n, dvec, svec in zip(normed, dense_vectors, sparse_vectors):
+        if hasattr(dvec, "tolist"):
+            dvec = dvec.tolist()
+        dvec = [float(x) for x in dvec]
         name = f"{n['doc_id']}::{n['chunk_id']}"
         pid = make_point_id(name, scheme=settings.embed_id_scheme)
 
@@ -78,7 +80,14 @@ def docs_to_points(provider: FastEmbedProvider, docs: List[dict]) -> List[PointS
             "chunk_hash": sha1(n["text"]),
             **(n["extra_payload"] or {}),
         }
-        pts.append(PointStruct(id=pid, vector=vec, payload=payload))
+        pts.append(PointStruct(
+            id=pid,
+            vector={
+                "dense": dvec,
+                "sparse": SparseVector(indices=svec[0], values=svec[1]),
+            },
+            payload=payload,
+        ))
     return pts
 
 def upsert_from_iter(iterable_docs: Iterable[Dict]) -> Tuple[int, int]:
