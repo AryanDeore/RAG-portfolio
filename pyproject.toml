@@ -39,3 +39,9 @@ markers = [
   "unit: fast, pure-Python tests",
   "integration: hits filesystem, services, or optional deps",
 ]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "psycopg2-binary>=2.9.12",
+]
