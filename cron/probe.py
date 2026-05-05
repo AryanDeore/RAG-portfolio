@@ -53,13 +53,16 @@ def ensure_table(conn) -> None:
 def send_telegram(chat_id: str, message: str) -> None:
     """Send a Telegram message. Silently skips if credentials are not set."""
     if not TELEGRAM_BOT_TOKEN or not chat_id:
+        print("Telegram skipped — token or chat_id not set")
         return
     try:
-        httpx.post(
+        resp = httpx.post(
             f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
             json={"chat_id": chat_id, "text": message, "parse_mode": "HTML"},
             timeout=10,
         )
+        resp.raise_for_status()
+        print(f"Telegram sent OK: {resp.status_code}")
     except Exception as e:
         print(f"Telegram alert failed: {e}")
 
