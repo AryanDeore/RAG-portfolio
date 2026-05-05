@@ -123,12 +123,13 @@ def run_probe() -> bool:
 
     # Send Telegram alert on success
     if success and TELEGRAM_CHAT_ID_SUCCESS:
+        answer_preview = str(answer)[:1500] if answer else "N/A"
         send_telegram(
             TELEGRAM_CHAT_ID_SUCCESS,
             f"✅ <b>RAG Portfolio — Smoke Test PASSED</b>\n\n"
-            f"<b>Status:</b> {status_code}\n"
-            f"<b>Response time:</b> {response_time_ms}ms\n"
-            f"<b>Time:</b> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}",
+            f"<b>Status:</b> {status_code}\n\n"
+            f"<b>Time:</b> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}\n\n"
+            f"<b>Answer:</b>\n{answer_preview}",
         )
 
     # Send Telegram alert on failure
