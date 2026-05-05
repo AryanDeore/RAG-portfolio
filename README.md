@@ -29,8 +29,23 @@ One of the primary challenges in RAG is that standard recursive text splitters o
 *   **LiteLLM** serves as a unified interface, decoupling the backend logic from specific providers. 
 *   **Streaming:** Responses are delivered via Server-Sent Events (SSE) to the Next.js frontend, achieving a **Time-To-First-Token (TTFT) of <1 second**.
 
+## Infrastructure
+The backend API is hosted on **Railway**. Two additional Railway services were provisioned to ensure the application remains available at all times:
+
+### Why Railway?
+All services — the API, the database, and the cron job — run within the same Railway project. This means they communicate over Railway's **private network** (`*.railway.internal`) at no egress cost, keeping the setup both free and secure.
+
+### PostgreSQL
+A managed PostgreSQL database permanently logs the result of every daily probe — timestamp, HTTP status code, the LLM's answer, and response time.
+
+### Daily Smoke Test (Cron Job)
+Qdrant's free tier decommissions clusters after a period of inactivity. To prevent this, a lightweight Python cron job runs every day at 09:00 UTC. It:
+- Sends a real question through the full RAG pipeline via the private API endpoint
+- Exercises every service in the stack — Qdrant, FastEmbed, OpenRouter, and Opik
+- Writes the result to PostgreSQL over the private network
+- Sends a **Telegram alert** to a dedicated success group on every run, and a separate failure group if anything goes wrong
+
 ## Observability
 **Comet Opik** tracks every trace, every interaction within the system. This monitors:
 *   **Traces:** Full visibility into retrieval steps, including the exact chunks retrieved and their similarity scores.
 *   **Cost Analysis:** Token usage tracking per query to optimize spend (maintaining an average of **~$0.001 per query**).
-
