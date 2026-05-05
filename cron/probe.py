@@ -1,11 +1,17 @@
 """
 Daily smoke test probe.
-Calls the /chat endpoint and writes the result to PostgreSQL.
+Calls the /chat endpoint, writes the result to PostgreSQL,
+and sends a Telegram alert on failure.
 
 Required environment variables:
-    API_INTERNAL_URL  — e.g. http://api.railway.internal:8000
-    API_KEY           — x-api-key header value
-    DATABASE_URL      — PostgreSQL private connection string
+    API_INTERNAL_URL    — e.g. http://rag-portfolio.railway.internal:8080
+    API_KEY             — x-api-key header value
+    DATABASE_URL        — PostgreSQL private connection string
+
+Optional environment variables (Telegram alerting):
+    TELEGRAM_BOT_TOKEN       — bot token from @BotFather
+    TELEGRAM_CHAT_ID_SUCCESS — chat ID for success messages
+    TELEGRAM_CHAT_ID_FAILURE — chat ID for failure messages
 """
 
 import os
@@ -19,6 +25,10 @@ import psycopg2
 API_URL = os.environ["API_INTERNAL_URL"]
 API_KEY = os.getenv("API_KEY", "")
 DATABASE_URL = os.environ["DATABASE_URL"]
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID_SUCCESS = os.getenv("TELEGRAM_CHAT_ID_SUCCESS")
+TELEGRAM_CHAT_ID_FAILURE = os.getenv("TELEGRAM_CHAT_ID_FAILURE")
 
 QUESTION = "What technologies and tools does Aryan work with?"
 
@@ -38,6 +48,23 @@ def ensure_table(conn) -> None:
             )
         """)
     conn.commit()
+
+
+def send_telegram(chat_id: str, message: str) -> None:
+    """Send a Telegram message. Silently skips if credentials are not set."""
+    if not TELEGRAM_BOT_TOKEN or not chat_id:
+        print("Telegram skipped — token or chat_id not set")
+        return
+    try:
+        resp = httpx.post(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            json={"chat_id": chat_id, "text": message, "parse_mode": "HTML"},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        print(f"Telegram sent OK: {resp.status_code}")
+    except Exception as e:
+        print(f"Telegram alert failed: {e}")
 
 
 def run_probe() -> bool:
@@ -93,6 +120,27 @@ def run_probe() -> bool:
     print(f"success={success}")
     if answer:
         print(f"answer={answer[:300]}")
+
+    # Send Telegram alert on success
+    if success and TELEGRAM_CHAT_ID_SUCCESS:
+        answer_preview = str(answer)[:1500] if answer else "N/A"
+        send_telegram(
+            TELEGRAM_CHAT_ID_SUCCESS,
+            f"✅ <b>RAG Portfolio — Smoke Test PASSED</b>\n\n"
+            f"<b>Status:</b> {status_code}\n\n"
+            f"<b>Time:</b> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}\n\n"
+            f"<b>Answer:</b>\n{answer_preview}",
+        )
+
+    # Send Telegram alert on failure
+    if (not success) and TELEGRAM_CHAT_ID_FAILURE:
+        send_telegram(
+            TELEGRAM_CHAT_ID_FAILURE,
+            f"🚨 <b>RAG Portfolio — Smoke Test FAILED</b>\n\n"
+            f"<b>Status:</b> {status_code}\n"
+            f"<b>Time:</b> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}\n"
+            f"<b>Error:</b> {str(answer)[:300]}",
+        )
 
     return success
 
